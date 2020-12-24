@@ -60,6 +60,8 @@ getTilts	KEYWORD2
 measureAngleOffsets	KEYWORD2
 getOrientation	KEYWORD2
 getOrientationAsString	KEYWORD2
+getPitch	KEYWORD2
+getRoll	KEYWORD2
 setMeasureMode	KEYWORD2
 setSleep	KEYWORD2
 setAutoSleep	KEYWORD2
