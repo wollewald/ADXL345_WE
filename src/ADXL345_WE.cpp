@@ -213,14 +213,14 @@ xyzFloat ADXL345_WE::getAngles(){
 	return angleVal;
 }
 
-xyzFloat ADXL345_WE::getTilts(){
+xyzFloat ADXL345_WE::getCorrAngles(){
 	getAngles();
-	xyzFloat tiltVal;
-	tiltVal.x = angleVal.x - angleOffsetVal.x;
-	tiltVal.y = angleVal.y - angleOffsetVal.y;
-	tiltVal.z = angleVal.z - angleOffsetVal.z;
+	xyzFloat corrAnglesVal;
+	corrAnglesVal.x = angleVal.x - angleOffsetVal.x;
+	corrAnglesVal.y = angleVal.y - angleOffsetVal.y;
+	corrAnglesVal.z = angleVal.z - angleOffsetVal.z;
 		
-	return tiltVal;
+	return corrAnglesVal;
 }
 
 /************ Angles and Orientation ************/ 
@@ -271,11 +271,23 @@ String ADXL345_WE::getOrientationAsString(){
 		case FLAT: 		orientationAsString = "z up"; 	break;
 		case FLAT_1:	orientationAsString = "z down";	break;
 		case XY:	 	orientationAsString = "y up"; 	break;
-		case XY_1: 		orientationAsString = "y down"; 	break;
+		case XY_1: 		orientationAsString = "y down"; break;
 		case YX:		orientationAsString = "x up"; 	break;
-		case YX_1:		orientationAsString = "x down"; 	break;
+		case YX_1:		orientationAsString = "x down"; break;
 	}
 	return orientationAsString;
+}
+
+float ADXL345_WE::getPitch(){
+	getGValues();
+	float pitch = (atan2(gVal.x, sqrt(gVal.x*gVal.y + gVal.z*gVal.z))*180.0)/M_PI;
+	return pitch;
+}
+	
+float ADXL345_WE::getRoll(){
+	getGValues();
+	float roll = (atan2(gVal.y, gVal.z)*180.0)/M_PI;
+	return roll;
 }
 
 /************ Power, Sleep, Standby ************/ 

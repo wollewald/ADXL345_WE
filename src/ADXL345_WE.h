@@ -180,13 +180,15 @@ public:
 	xyzFloat getCorrectedRawValues();
 	xyzFloat getGValues();
 	xyzFloat getAngles();
-	xyzFloat getTilts();
-	
+	xyzFloat getCorrAngles();
+		
 	/* Angles and Orientation */ 
 	
 	void measureAngleOffsets();
 	adxl345_orientation getOrientation();
 	String getOrientationAsString();
+	float getPitch();
+	float getRoll();
 	
 	/* Power, Sleep, Standby */ 
 	
