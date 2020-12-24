@@ -9,17 +9,18 @@ If you are not so much experienced with the ADXL345, I recommend to work through
 
 1) ADXL345_basic_data
 2) ADXL345_calibration
-3) ADXL345_angles_tilt_orientation
-4) ADXL345_sleep
-5) ADXL345_free_fall_interrupt
-6) ADXL345_data_ready_interrupt
-7) ADXL345_activity_inactivity_interrupt
-8) ADXL345_auto_sleep.ino
-9) ADXL345_single_tap
-10) ADXL345_double_tap
-11) ADXL345_fifo_fifo
-12) ADXL345_fifo_stream
-13) ADXL345_fifo_trigger
+3) ADXL345_angles_orientation
+4) ADXL345_pitch_roll_corrected_angles
+5) ADXL345_sleep
+6) ADXL345_free_fall_interrupt
+7) ADXL345_data_ready_interrupt
+8) ADXL345_activity_inactivity_interrupt
+9) ADXL345_auto_sleep.ino
+10) ADXL345_single_tap
+11) ADXL345_double_tap
+12) ADXL345_fifo_fifo
+13) ADXL345_fifo_stream
+14) ADXL345_fifo_trigger
 
 To develop this library I have worked with a ADXL345 module. It should also work with the bare ADXL345 IC. For the module I have noticed that the power consumption is much higher than mentioned in the data sheet. I think the issue is the voltage converter on the module. You can reduce the power consumption by choosing 3.3 volts instead of 5 volts. At least this worked with my module. 
 
