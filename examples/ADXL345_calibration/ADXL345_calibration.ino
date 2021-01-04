@@ -5,12 +5,12 @@
 * It does not use the internal offset registers.
 *  
 * Further information can be found on:
-* http://wolles-elektronikkiste.de
+* https://wolles-elektronikkiste.de/adxl345-teil-1 (German)
 * 
 ***************************************************************************/
 #include<Wire.h>
 #include<ADXL345_WE.h>
-#define ADXL345_I2CADDR 0x53
+#define ADXL345_I2CADDR 0x53  // 0x1D if SDO = HIGH
 
 ADXL345_WE myAcc(ADXL345_I2CADDR);
 // ADXL345_WE myAcc = ADXL345_WE(); // Alternative: sets default address 0x53
