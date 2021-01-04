@@ -8,13 +8,13 @@
 * You might consider to save them to the EEPROM
 *  
 * Further information can be found on: 
-* http://wolles-elektronikkiste.de
+* https://wolles-elektronikkiste.de/adxl345-teil-1 (German)
 * 
 ***************************************************************************/
 
 #include<Wire.h>
 #include<ADXL345_WE.h>
-#define ADXL345_I2CADDR 0x53
+#define ADXL345_I2CADDR 0x53 // 0x1D if SDO = HIGH
 
 ADXL345_WE myAcc(ADXL345_I2CADDR);
 // ADXL345_WE myAcc = ADXL345_WE(); // Alternative: sets default address 0x53
@@ -38,7 +38,7 @@ void setup(){
 
 /* In this next step the offset for angles is corrected to get quite precise corrected 
  *  angles for x and y up to ~60°. The additional offsetCorrection is only used for 
- *  corrected angles measurements.The procedure just ensures to start at 0°.
+ *  corrected angles measurements. The procedure just ensures to start at 0°.
 */
   Serial.println("Position your ADXL345 flat and don't move it");
   delay(2000);
