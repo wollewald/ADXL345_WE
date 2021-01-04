@@ -10,7 +10,7 @@
  * If you find bugs, please inform me!
  * 
  * Written by Wolfgang (Wolle) Ewald
- * https://wolles-elektronikkiste.de
+ * https://wolles-elektronikkiste.de/adxl345-teil-1
  *
  * 
  ******************************************************************************/
@@ -195,6 +195,7 @@ public:
 	bool setMeasureMode(bool measure);
 	void setSleep(bool sleep, adxl345_wUpFreq freq);
 	void setSleep(bool sleep);
+	void setAutoSleep(bool autoSleep, adxl345_wUpFreq freq);
 	void setAutoSleep(bool autoSleep);
 	bool isAsleep();
 	void setLowPower(bool lowpwr);

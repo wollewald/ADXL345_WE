@@ -9,7 +9,7 @@
 * If you find bugs, please inform me!
 * 
 * Written by Wolfgang (Wolle) Ewald
-* https://wolles-elektronikkiste.de
+* https://wolles-elektronikkiste.de/adxl345-teil-1
 *
 *******************************************/
 
@@ -339,7 +339,22 @@ void ADXL345_WE::setSleep(bool sleep){
 	}
 }
 	
-
+void ADXL345_WE::setAutoSleep(bool autoSleep, adxl345_wUpFreq freq){
+	if(autoSleep){
+		setLinkBit(true);
+	}
+	regVal = readRegister8(ADXL345_POWER_CTL);
+	regVal &= 0b11111100;
+	regVal |= freq;
+	if(autoSleep){
+		regVal |= (1<<ADXL345_AUTO_SLEEP);		
+	}
+	else{
+		regVal &= ~(1<<ADXL345_AUTO_SLEEP);
+	}
+	writeRegister(ADXL345_POWER_CTL, regVal);
+}
+		
 void ADXL345_WE::setAutoSleep(bool autoSleep){
 	if(autoSleep){
 		setLinkBit(true);
