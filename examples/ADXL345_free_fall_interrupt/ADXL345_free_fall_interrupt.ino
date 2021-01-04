@@ -4,13 +4,13 @@
 * This sketch shows how to use the free fall interrupt.
 *   
 * Further information can be found on: 
-* http://wolles-elektronikkiste.de
+* https://wolles-elektronikkiste.de/adxl345-teil-1 (German)
 * 
 ***************************************************************************/
 
 #include<Wire.h>
 #include<ADXL345_WE.h>
-#define ADXL345_I2CADDR 0x53
+#define ADXL345_I2CADDR 0x53  // 0x1D if SDO = HIGH
 const int int2Pin = 2;
 volatile bool freeFall = false;
 
@@ -72,20 +72,20 @@ void setup(){
 /* You can choose the following interrupts:
      Variable name:             Triggered, if:
     ADXL345_OVERRUN      -   new data replaces unread data
-    ADXL345_WATERMARK    -   the number samples in FIFO equals number defined in FIFO_CTL
-    ADXL345_FREEFALL     -   acceleration values of all axes are below the thresold defined in THRESH_FF 
+    ADXL345_WATERMARK    -   the number of samples in FIFO equals the number defined in FIFO_CTL
+    ADXL345_FREEFALL     -   acceleration values of all axes are below the threshold defined in THRESH_FF 
     ADXL345_INACTIVITY   -   acc. value of all included axes are < THRESH_INACT for period > TIME_INACT
     ADXL345_ACTIVITY     -   acc. value of included axes are > THRESH_ACT
     ADXL345_DOUBLE_TAP   -   double tap detected on one incl. axis and various defined conditions are met
     ADXL345_SINGLE_TAP   -   single tap detected on one incl. axis and various defined conditions are met
     ADXL345_DATA_READY   -   new data available
 
-    Assign the interrupts to INT1 (INT_PIN_2) or INT2 (INT_PIN_2). Data ready, watermark and overrun are 
+    Assign the interrupts to INT1 (INT_PIN_1) or INT2 (INT_PIN_2). Data ready, watermark and overrun are 
     always enabled. You can only change the assignment of these which is INT1 by default.
 
     You can delete interrupts with deleteInterrupt(type);
 */
-  myAcc.setInterrupt(ADXL345_FREEFALL, 2);
+  myAcc.setInterrupt(ADXL345_FREEFALL, INT_PIN_2);
   
   attachInterrupt(digitalPinToInterrupt(int2Pin), freeFallISR, RISING); 
   freeFall=false; 
