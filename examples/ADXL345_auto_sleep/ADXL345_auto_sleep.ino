@@ -4,7 +4,7 @@
 * This sketch shows how to use the auto sleep function.
 *   
 * Further information can be found on: 
-* http://wolles-elektronikkiste.de
+* https://wolles-elektronikkiste.de/adxl345-teil-1
 * 
 ***************************************************************************/
 #include<Wire.h>
@@ -62,7 +62,7 @@ void setup() {
  
   attachInterrupt(digitalPinToInterrupt(int2Pin), in_activityISR, RISING);
 
-/* The following settings similar to the settings in ADXL345_activity_inactivity_interrupt.ino */
+/* The following settings are similar to the settings in ADXL345_activity_inactivity_interrupt.ino */
 
 /* Three parameters have to be set for activity:
     1. DC / AC Mode:
@@ -94,8 +94,8 @@ void setup() {
 /* You can choose the following interrupts:
      Variable name:             Triggered, if:
     ADXL345_OVERRUN      -   new data replaces unread data
-    ADXL345_WATERMARK    -   the number samples in FIFO equals number defined in FIFO_CTL
-    ADXL345_FREEFALL     -   acceleration values of all axes are below the thresold defined in THRESH_FF 
+    ADXL345_WATERMARK    -   the number of samples in FIFO equals the number defined in FIFO_CTL
+    ADXL345_FREEFALL     -   acceleration values of all axes are below the threshold defined in THRESH_FF 
     ADXL345_INACTIVITY   -   acc. value of all included axes are < THRESH_INACT for period > TIME_INACT
     ADXL345_ACTIVITY     -   acc. value of included axes are > THRESH_ACT
     ADXL345_DOUBLE_TAP   -   double tap detected on one incl. axis and various defined conditions are met
@@ -112,14 +112,21 @@ void setup() {
  
 /* Auto sleep is connected with activity and inactivity. The device goes in sleep when inactivity is 
     detected. The link bit must be set, if you want to use auto sleep. The library sets the link bit 
-    automatically. You won't see too much difference in sleep and awake state under these conditions,
-    since the ADXL345 wakes up periodically from sleep mode (default 8 Hz -> ADXL345_sleep.ino).
+    automatically. When the ADXL345 goes into sleep mode it wakes up periodically (default is 8 Hz).
+    
+    Choose the wake up frequency:
+    ADXL345_WUP_FQ_1  =  1 Hz
+    ADXL345_WUP_FQ_2  =  2 Hz
+    ADXL345_WUP_FQ_4  =  4 Hz 
+    ADXL345_WUP_FQ_8  =  8 Hz
+    
 */
-  myAcc.setAutoSleep(true);
+  myAcc.setAutoSleep(true, ADXL345_WUP_FQ_1);
+  // alternative: myAcc.setAutoSleep(true/false) without changing the wake up frequency.
 }
 
 void loop() {
-  if ((millis() % 1000) == 1) {
+  if ((millis() % 300) == 1) {
     xyzFloat g = myAcc.getGValues();
     Serial.print("g-x   = ");
     Serial.print(g.x);
@@ -145,7 +152,6 @@ void loop() {
       }
     }
       
-    delay(1000);
     myAcc.readAndClearInterrupts();
     in_activity = false;
   }
