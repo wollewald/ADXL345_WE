@@ -9,7 +9,7 @@
 ***************************************************************************/
 #include<Wire.h>
 #include<ADXL345_WE.h>
-#define ADXL345_I2CADDR 0x53
+#define ADXL345_I2CADDR 0x53 // 0x1D if SDO = HIGH
 const int int2Pin = 2;
 volatile bool in_activity = false;
 
@@ -102,7 +102,7 @@ void setup() {
     ADXL345_SINGLE_TAP   -   single tap detected on one incl. axis and various defined conditions are met
     ADXL345_DATA_READY   -   new data available
 
-    Assign the interrupts to INT1 (INT_PIN_2) or INT2 (INT_PIN_2). Data ready, watermark and overrun are 
+    Assign the interrupts to INT1 (INT_PIN_1) or INT2 (INT_PIN_2). Data ready, watermark and overrun are 
     always enabled. You can only change the assignment of these which is INT1 by default.
 
     You can delete interrupts with deleteInterrupt(type);
