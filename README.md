@@ -3,7 +3,7 @@ Arduino Library for the ADXL345 accelerometer
 
 I have tried to create a library for the ADXL345 which is easy to use for people who don't want to deal with all the registers. Therefore I have added lots example sketches which will enable you to deal even with the more complex features such as the FIFO modes. Howerever I still recommend to have a look into the data sheet to get a deeper understanding. 
 
-Soon, I will publish a detailed tutorial on my website "https://wolles-elektronikkiste.de". It will be available in German language first and a few weeks later also in English language. 
+A detailed tutorial is available: https://wolles-elektronikkiste.de/adxl345-teil-1". It's in German will also be available in English language soon. 
 
 If you are not so much experienced with the ADXL345, I recommend to work through the examples in the following order:
 
