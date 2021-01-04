@@ -4,7 +4,7 @@
 * This sketch shows how to use the activity / inactivity interrupts.
 *   
 * Further information can be found on: 
-* http://wolles-elektronikkiste.de
+* https://wolles-elektronikkiste.de/adxl345-teil-1 (German)
 * 
 ***************************************************************************/
 
@@ -104,15 +104,15 @@ void setup() {
 /* You can choose the following interrupts:
      Variable name:             Triggered, if:
     ADXL345_OVERRUN      -   new data replaces unread data
-    ADXL345_WATERMARK    -   the number samples in FIFO equals number defined in FIFO_CTL
-    ADXL345_FREEFALL     -   acceleration values of all axes are below the thresold defined in THRESH_FF 
+    ADXL345_WATERMARK    -   the number of samples in FIFO equals the number defined in FIFO_CTL
+    ADXL345_FREEFALL     -   acceleration values of all axes are below the threshold defined in THRESH_FF 
     ADXL345_INACTIVITY   -   acc. value of all included axes are < THRESH_INACT for period > TIME_INACT
     ADXL345_ACTIVITY     -   acc. value of included axes are > THRESH_ACT
     ADXL345_DOUBLE_TAP   -   double tap detected on one incl. axis and various defined conditions are met
     ADXL345_SINGLE_TAP   -   single tap detected on one incl. axis and various defined conditions are met
     ADXL345_DATA_READY   -   new data available
 
-    Assign the interrupts to INT1 (INT_PIN_2) or INT2 (INT_PIN_2). Data ready, watermark and overrun are 
+    Assign the interrupts to INT1 (INT_PIN_1) or INT2 (INT_PIN_2). Data ready, watermark and overrun are 
     always enabled. You can only change the assignment of these which is INT1 by default.
 
     You can delete interrupts with deleteInterrupt(type);
@@ -123,7 +123,7 @@ void setup() {
 }
 
 /* In the main loop some checks are done:
-    getActTapStatus() returns which axes are resposible activity interrupt as byte (code in library)
+    getActTapStatus() returns which axes are responsible activity interrupt as byte (code in library)
     getActTapStatusAsString() returns the axes that caused the interrupt as string
     readAndClearInterrupts(); return the interrupt type as byte (code in library) 
     checkInterrupt(intSource, type) returns if intSource is type as bool  
