@@ -10,7 +10,7 @@
 
 #include<Wire.h>
 #include<ADXL345_WE.h>
-#define ADXL345_I2CADDR 0x53
+#define ADXL345_I2CADDR 0x53 // 0x1D if SDO = HIGH
 const int int2Pin = 2;
 volatile bool in_activity = false; // in_activity: either activity or inactivity interrupt occured
 
