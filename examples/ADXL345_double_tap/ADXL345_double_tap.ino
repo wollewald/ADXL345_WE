@@ -118,9 +118,9 @@ void setup() {
 }
 
 /* In the main loop some checks are done:
-    getActTapStatus() returns which axes are responsible activity interrupt as byte (code in library)
+    getActTapStatus() returns which axes are responsible for activity interrupt as byte (code in library)
     getActTapStatusAsString() returns the axes that caused the interrupt as string
-    readAndClearInterrupts(); return the interrupt type as byte (code in library) 
+    readAndClearInterrupts(); returns the interrupt type as byte (code in library) 
     checkInterrupt(intSource, type) returns if intSource is type as bool  
 */
 void loop() {
