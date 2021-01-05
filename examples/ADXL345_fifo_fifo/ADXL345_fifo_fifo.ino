@@ -47,7 +47,7 @@ void setup() {
     ADXL345_DATA_RATE_0_20       0.20
     ADXL345_DATA_RATE_0_10       0.10
 */
-  myAcc.setDataRate(ADXL345_DATA_RATE_6_25);
+  myAcc.setDataRate(ADXL345_DATA_RATE_1_56);
   Serial.print("Data rate: ");
   Serial.print(myAcc.getDataRateAsString());
 
@@ -101,6 +101,8 @@ void setup() {
 }
 
 void loop() {
+  event = false; 
+  
   countDown(); // as an alternative you could define any other event to start to fill the FIFO
   myAcc.readAndClearInterrupts();
   myAcc.setMeasureMode(true); // this is the actual start
@@ -123,8 +125,6 @@ void loop() {
   while(!(Serial.available())){}
   Serial.read();
   Serial.println();
-  
-  event = false; 
 }
 
 void eventISR() {
