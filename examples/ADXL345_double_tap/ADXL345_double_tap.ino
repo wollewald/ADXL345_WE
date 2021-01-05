@@ -93,7 +93,7 @@ void setup() {
         not set, the tap during latency time will be ignored. Another tap in the time window (see 2) will lead 
         to double tap detection. 
     2. Time window in milliseconds: starts after latency time. The second tap must occur during the time window
-        period, otherwise it is a single tap (if single tap is active)
+        period, otherwise it is a single tap (if single tap is active). Maximum window is 318 ms.
 */
   myAcc.setAdditionalDoubleTapParameters(false, 250);
 
