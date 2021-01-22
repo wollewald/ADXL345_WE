@@ -6,6 +6,7 @@
 *  
 * Further information can be found on:
 * https://wolles-elektronikkiste.de/adxl345-teil-1 (German)
+* https://wolles-elektronikkiste.de/en/adxl345-the-universal-accelerometer-part-1 (English)
 * 
 ***************************************************************************/
 #include<Wire.h>
