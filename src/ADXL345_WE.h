@@ -10,7 +10,8 @@
  * If you find bugs, please inform me!
  * 
  * Written by Wolfgang (Wolle) Ewald
- * https://wolles-elektronikkiste.de/adxl345-teil-1
+ * https://wolles-elektronikkiste.de/adxl345-teil-1 (German)
+ * https://wolles-elektronikkiste.de/en/adxl345-the-universal-accelerometer-part-1 (English)
  *
  * 
  ******************************************************************************/
