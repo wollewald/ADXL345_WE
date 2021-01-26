@@ -39,7 +39,6 @@ bool ADXL345_WE::init(){
 	offsetVal.x = 0.0;
 	offsetVal.y = 0.0;
 	offsetVal.z = 0.0;
-	setRange(ADXL345_RANGE_2G);
 	writeRegister(ADXL345_DATA_FORMAT,0);
 	setFullRes(true);
 	writeRegister(ADXL345_INT_ENABLE, 0);
