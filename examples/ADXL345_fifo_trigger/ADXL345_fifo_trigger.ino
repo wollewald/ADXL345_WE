@@ -104,7 +104,7 @@ void setup() {
     1. Trigger Bit: the trigger is an interrupt at INT1 or INT2
         ADXL345_TRIGGER_INT_1 - Trigger is an interrupt at INT1
         ADXL345_TRIGGER_INT_2 - Trigger is an interrupt at INT2
-    2. FIFO samples (max 32). Defines the size of the FIFO. One set of x,y,z is three samples.
+    2. FIFO samples (max 32). Defines the size of the FIFO. One sample is an x,y,z triple.
 */
   myAcc.setFifoParameters(ADXL345_TRIGGER_INT_2, 15);
   
