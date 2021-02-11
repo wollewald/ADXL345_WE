@@ -102,7 +102,7 @@ void setup() {
 
 /* The following two FIFO parameters need to be set:
     1. Trigger Bit: not relevant for this FIFO mode.
-    2. FIFO samples (max 32). Defines the size of the FIFO. One set of x,y,z is three samples.
+    2. FIFO samples (max 32). Defines the size of the FIFO. One sample is an x,y,z triple.
 */
   myAcc.setFifoParameters(ADXL345_TRIGGER_INT_1, 32);
  
