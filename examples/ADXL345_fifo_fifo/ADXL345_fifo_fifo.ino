@@ -48,7 +48,7 @@ void setup() {
     ADXL345_DATA_RATE_0_20       0.20
     ADXL345_DATA_RATE_0_10       0.10
 */
-  myAcc.setDataRate(ADXL345_DATA_RATE_1_56);
+  myAcc.setDataRate(ADXL345_DATA_RATE_3_13);
   Serial.print("Data rate: ");
   Serial.print(myAcc.getDataRateAsString());
 
@@ -111,7 +111,7 @@ void loop() {
   myAcc.setMeasureMode(false);
   Serial.println("FiFo full");
   
-  for(int i=0; i<14; i++){ // this is > 32 samples, but I want to show that the values do not change when FIFO is full
+  for(int i=0; i<34; i++){ // this is > 32 samples, but I want to show that the values do not change when FIFO is full
     xyzFloat g = myAcc.getGValues();
     
     Serial.print("g-x   = ");
