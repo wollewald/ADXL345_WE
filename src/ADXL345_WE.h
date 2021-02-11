@@ -61,29 +61,29 @@
 #define ADXL345_FIFO_STATUS      0x39
 
 /* Register bits */
-#define ADXL345_FULL_RES		0x03
-#define ADXL345_SUPPRESS		0x03
-#define ADXL345_LOW_POWER 		0x04
+#define ADXL345_FULL_RES        0x03
+#define ADXL345_SUPPRESS        0x03
+#define ADXL345_LOW_POWER       0x04
 
 /* Others */
-#define MILLI_G_PER_LSB			 3.9f
-#define UNITS_PER_G			  256.41f  // = 1/0.0039
-#define INT_PIN_1 					1
-#define INT_PIN_2					2
-#define ADXL345_ACT_LOW				1
-#define ADXL345_ACT_HIGH			0
+#define MILLI_G_PER_LSB          3.9f
+#define UNITS_PER_G           256.41f  // = 1/0.0039
+#define INT_PIN_1                   1
+#define INT_PIN_2                   2
+#define ADXL345_ACT_LOW             1
+#define ADXL345_ACT_HIGH            0
 
 
 typedef enum ADXL345_PWR_CTL {
-	ADXL345_WAKE_UP_0, ADXL_WAKE_UP_1, ADXL345_SLEEP, 
-	ADXL345_MEASURE, ADXL345_AUTO_SLEEP, ADXL345_LINK
+    ADXL345_WAKE_UP_0, ADXL_WAKE_UP_1, ADXL345_SLEEP, 
+    ADXL345_MEASURE, ADXL345_AUTO_SLEEP, ADXL345_LINK
 } adxl345_pwrCtl;
 
 typedef enum ADXL345_WAKE_UP { // belongs to POWER CTL
-	ADXL345_WAKE_UP_FREQ_8,
-	ADXL345_WAKE_UP_FREQ_4,
-	ADXL345_WAKE_UP_FREQ_2,
-	ADXL345_WAKE_UP_FREQ_1,
+    ADXL345_WAKE_UP_FREQ_8,
+    ADXL345_WAKE_UP_FREQ_4,
+    ADXL345_WAKE_UP_FREQ_2,
+    ADXL345_WAKE_UP_FREQ_1,
 } adxl345_wakeUpFreq;
 
 typedef enum ADXL345_DATA_RATE {
@@ -117,34 +117,34 @@ typedef enum ADXL345_ORIENTATION {
 } adxl345_orientation;
 
 typedef enum ADXL345_INT {
-	ADXL345_OVERRUN, ADXL345_WATERMARK, ADXL345_FREEFALL, ADXL345_INACTIVITY, 
-	ADXL345_ACTIVITY, ADXL345_DOUBLE_TAP, ADXL345_SINGLE_TAP, ADXL345_DATA_READY
+    ADXL345_OVERRUN, ADXL345_WATERMARK, ADXL345_FREEFALL, ADXL345_INACTIVITY, 
+    ADXL345_ACTIVITY, ADXL345_DOUBLE_TAP, ADXL345_SINGLE_TAP, ADXL345_DATA_READY
 } adxl345_int;
 
 typedef enum ADXL345_ACT_TAP_SET {
-	ADXL345_000, ADXL345_00Z, ADXL345_0Y0, ADXL345_0YZ,
-	ADXL345_X00, ADXL345_X0Z, ADXL345_XY0, ADXL345_XYZ
+    ADXL345_000, ADXL345_00Z, ADXL345_0Y0, ADXL345_0YZ,
+    ADXL345_X00, ADXL345_X0Z, ADXL345_XY0, ADXL345_XYZ
 } adxl345_actTapSet;
 
 typedef enum ADXL345_DC_AC {
-	ADXL345_DC_MODE = 0,
-	ADXL345_AC_MODE = 0x08
+    ADXL345_DC_MODE = 0,
+    ADXL345_AC_MODE = 0x08
 } adxl345_dcAcMode;
 
 typedef enum ADXL345_WAKE_UP_FREQ{
-	ADXL345_WUP_FQ_8, ADXL345_WUP_FQ_4, ADXL345_WUP_FQ_2, ADXL345_WUP_FQ_1
+    ADXL345_WUP_FQ_8, ADXL345_WUP_FQ_4, ADXL345_WUP_FQ_2, ADXL345_WUP_FQ_1
 } adxl345_wUpFreq;
 
 typedef enum ADXL345_ACT_TAP {
-	ADXL345_TAP_Z, ADXL345_TAP_Y, ADXL345_TAP_X, ADXL345_ASLEEP, ADXL345_ACT_Z, ADXL345_ACT_Y, ADXL345_ACT_X
+    ADXL345_TAP_Z, ADXL345_TAP_Y, ADXL345_TAP_X, ADXL345_ASLEEP, ADXL345_ACT_Z, ADXL345_ACT_Y, ADXL345_ACT_X
 } adxl345_actTap;
 
 typedef enum ADXL345_FIFO_MODE {
-	ADXL345_BYPASS, ADXL345_FIFO, ADXL345_STREAM, ADXL345_TRIGGER
+    ADXL345_BYPASS, ADXL345_FIFO, ADXL345_STREAM, ADXL345_TRIGGER
 } adxl345_fifoMode;
 
 typedef enum ADXL345_TRIGGER_INT {
-	ADXL345_TRIGGER_INT_1, ADXL345_TRIGGER_INT_2
+    ADXL345_TRIGGER_INT_1, ADXL345_TRIGGER_INT_2
 } adxl345_triggerInt;
 
 struct xyzFloat {
@@ -156,89 +156,90 @@ struct xyzFloat {
 
 class ADXL345_WE
 {
-public:	
-	/* Constructors */
-	
-	ADXL345_WE(int addr);
-	ADXL345_WE();			//sets default I2C Address 0x53
-	
-	/* Basic settings */
-	
-	bool init();
-	void setCorrFactors(float xMin, float xMax, float yMin, float yMax, float zMin, float zMax);
-	void setDataRate(adxl345_dataRate rate);
-	adxl345_dataRate getDataRate();
-	String getDataRateAsString();
-	uint8_t getPowerCtlReg();
-	void setRange(adxl345_range range);
-	adxl345_range getRange();
-	void setFullRes(boolean full);
-	String getRangeAsString();
-	
-	/* x,y,z results */
-		
-	xyzFloat getRawValues();
-	xyzFloat getCorrectedRawValues();
-	xyzFloat getGValues();
-	xyzFloat getAngles();
-	xyzFloat getCorrAngles();
-		
-	/* Angles and Orientation */ 
-	
-	void measureAngleOffsets();
-	adxl345_orientation getOrientation();
-	String getOrientationAsString();
-	float getPitch();
-	float getRoll();
-	
-	/* Power, Sleep, Standby */ 
-	
-	bool setMeasureMode(bool measure);
-	void setSleep(bool sleep, adxl345_wUpFreq freq);
-	void setSleep(bool sleep);
-	void setAutoSleep(bool autoSleep, adxl345_wUpFreq freq);
-	void setAutoSleep(bool autoSleep);
-	bool isAsleep();
-	void setLowPower(bool lowpwr);
-	
-	/* Interrupts */
-	
-	void setInterrupt(adxl345_int type, uint8_t pin);
-	void setInterruptPolarity(uint8_t pol);
-	void deleteInterrupt(adxl345_int type);
-	uint8_t readAndClearInterrupts();
-	bool checkInterrupt(uint8_t source, adxl345_int type);
-	void setLinkBit(bool link);
-	void setFreeFallThresholds(float ffg, float fft);
-	void setActivityParameters(adxl345_dcAcMode mode, adxl345_actTapSet axes, float threshold);
-	void setInactivityParameters(adxl345_dcAcMode mode, adxl345_actTapSet axes, float threshold, uint8_t inactTime);
-	void setGeneralTapParameters(adxl345_actTapSet axes, float threshold, float duration, float latent);
-	void setAdditionalDoubleTapParameters(bool suppress, float window);
-	uint8_t getActTapStatus();
-	String getActTapStatusAsString();
-	
-	/* FIFO */
-	
-	void setFifoParameters(adxl345_triggerInt intNumber, uint8_t samples);
-	void setFifoMode(adxl345_fifoMode mode);
-	uint8_t getFifoStatus();
-	void resetTrigger();
-	
-	
+public: 
+    /* Constructors */
+    
+    ADXL345_WE(int addr);
+    ADXL345_WE();           //sets default I2C Address 0x53
+    
+    /* Basic settings */
+    
+    bool init();
+    void setCorrFactors(float xMin, float xMax, float yMin, float yMax, float zMin, float zMax);
+    void setDataRate(adxl345_dataRate rate);
+    adxl345_dataRate getDataRate();
+    String getDataRateAsString();
+    uint8_t getPowerCtlReg();
+    void setRange(adxl345_range range);
+    adxl345_range getRange();
+    void setFullRes(boolean full);
+    String getRangeAsString();
+    
+    /* x,y,z results */
+        
+    xyzFloat getRawValues();
+    xyzFloat getCorrectedRawValues();
+    xyzFloat getGValues();
+    xyzFloat getAngles();
+    xyzFloat getCorrAngles();
+        
+    /* Angles and Orientation */ 
+    
+    void measureAngleOffsets();
+    adxl345_orientation getOrientation();
+    String getOrientationAsString();
+    float getPitch();
+    float getRoll();
+    
+    /* Power, Sleep, Standby */ 
+    
+    bool setMeasureMode(bool measure);
+    void setSleep(bool sleep, adxl345_wUpFreq freq);
+    void setSleep(bool sleep);
+    void setAutoSleep(bool autoSleep, adxl345_wUpFreq freq);
+    void setAutoSleep(bool autoSleep);
+    bool isAsleep();
+    void setLowPower(bool lowpwr);
+    
+    /* Interrupts */
+    
+    void setInterrupt(adxl345_int type, uint8_t pin);
+    void setInterruptPolarity(uint8_t pol);
+    void deleteInterrupt(adxl345_int type);
+    uint8_t readAndClearInterrupts();
+    bool checkInterrupt(uint8_t source, adxl345_int type);
+    void setLinkBit(bool link);
+    void setFreeFallThresholds(float ffg, float fft);
+    void setActivityParameters(adxl345_dcAcMode mode, adxl345_actTapSet axes, float threshold);
+    void setInactivityParameters(adxl345_dcAcMode mode, adxl345_actTapSet axes, float threshold, uint8_t inactTime);
+    void setGeneralTapParameters(adxl345_actTapSet axes, float threshold, float duration, float latent);
+    void setAdditionalDoubleTapParameters(bool suppress, float window);
+    uint8_t getActTapStatus();
+    String getActTapStatusAsString();
+    
+    /* FIFO */
+    
+    void setFifoParameters(adxl345_triggerInt intNumber, uint8_t samples);
+    void setFifoMode(adxl345_fifoMode mode);
+    uint8_t getFifoStatus();
+    void resetTrigger();
+    
+    
 private:
-	int i2cAddress;
-	uint8_t regVal;   // intermediate storage of register values
-	xyzFloat rawVal;
-	xyzFloat gVal;
-	xyzFloat angleVal;
-	xyzFloat offsetVal;
-	xyzFloat angleOffsetVal;
-	xyzFloat corrFact;
-	int16_t rangeFactor;
-	uint8_t writeRegister(uint8_t reg, uint8_t val);
-	uint8_t readRegister8(uint8_t reg);
-	int16_t readRegister16(uint8_t reg);
-	bool adxl345_lowRes;
+    int i2cAddress;
+    uint8_t regVal;   // intermediate storage of register values
+    xyzFloat rawVal;
+    xyzFloat gVal;
+    xyzFloat angleVal;
+    xyzFloat offsetVal;
+    xyzFloat angleOffsetVal;
+    xyzFloat corrFact;
+    int16_t rangeFactor;
+    uint8_t writeRegister(uint8_t reg, uint8_t val);
+    uint8_t readRegister8(uint8_t reg);
+    int16_t readRegister16(uint8_t reg);
+    uint64_t readRegister3x16(uint8_t reg);
+    bool adxl345_lowRes;
 };
 
 #endif

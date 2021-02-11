@@ -170,9 +170,15 @@ xyzFloat ADXL345_WE::getRawValues(){
 }
 
 xyzFloat ADXL345_WE::getCorrectedRawValues(){
-	rawVal.x = readRegister16(ADXL345_DATAX0) - (offsetVal.x / rangeFactor);
-	rawVal.y = readRegister16(ADXL345_DATAY0) - (offsetVal.y / rangeFactor);
-	rawVal.z = readRegister16(ADXL345_DATAZ0) - (offsetVal.z / rangeFactor);
+	uint64_t xyzDataReg = readRegister3x16(ADXL345_DATAX0);
+	int16_t xRaw = (int16_t)((xyzDataReg >> 32) & 0xFFFF);
+	int16_t yRaw = (int16_t)((xyzDataReg >> 16) & 0xFFFF);
+	int16_t zRaw = (int16_t)(xyzDataReg & 0xFFFF);
+	
+	rawVal.x = xRaw - (offsetVal.x / rangeFactor);
+	rawVal.y = yRaw - (offsetVal.y / rangeFactor);
+	rawVal.z = zRaw - (offsetVal.z / rangeFactor);
+	
 	return rawVal;
 }
 
@@ -236,31 +242,31 @@ adxl345_orientation ADXL345_WE::getOrientation(){
 	adxl345_orientation orientation = FLAT;
 	getAngles();
 	if(abs(angleVal.x) < 45){      // |x| < 45
-    if(abs(angleVal.y) < 45){      // |y| < 45
-      if(angleVal.z > 0){          //  z  > 0
-        orientation = FLAT;
-      }
-      else{                        //  z  < 0
-        orientation = FLAT_1;
-      }
-    }
-    else{                         // |y| > 45 
-      if(angleVal.y > 0){         //  y  > 0
-        orientation = XY;
-      }
-      else{                       //  y  < 0
-        orientation = XY_1;   
-      }
-    }
-  }
-  else{                           // |x| >= 45
-    if(angleVal.x > 0){           //  x  >  0
-      orientation = YX;       
-      }
-      else{                       //  x  <  0
-        orientation = YX_1;
-      }
-  }
+		if(abs(angleVal.y) < 45){      // |y| < 45
+			if(angleVal.z > 0){          //  z  > 0
+				orientation = FLAT;
+			}
+			else{                        //  z  < 0
+				orientation = FLAT_1;
+			}
+		}
+		else{                         // |y| > 45 
+			if(angleVal.y > 0){         //  y  > 0
+				orientation = XY;
+			}
+			else{                       //  y  < 0
+				orientation = XY_1;   
+			}
+		}
+	}
+	else{                           // |x| >= 45
+		if(angleVal.x > 0){           //  x  >  0
+			orientation = YX;       
+		}
+		else{                       //  x  <  0
+			orientation = YX_1;
+		}
+	}
 	return orientation;
 }
 
@@ -574,42 +580,61 @@ void ADXL345_WE::resetTrigger(){
 *************************************************/
 
 uint8_t ADXL345_WE::writeRegister(uint8_t reg, uint8_t val){
-  Wire.beginTransmission(i2cAddress);
-  Wire.write(reg);
-  Wire.write(val);
+	Wire.beginTransmission(i2cAddress);
+	Wire.write(reg);
+	Wire.write(val);
   
-  return Wire.endTransmission();
+	return Wire.endTransmission();
 }
   
 uint8_t ADXL345_WE::readRegister8(uint8_t reg){
-  uint8_t regValue = 0;
-  Wire.beginTransmission(i2cAddress);
-  Wire.write(reg);
-  Wire.endTransmission();
-  Wire.requestFrom(i2cAddress,1);
-  if(Wire.available()){
-    regValue = Wire.read();
-  }
-  return regValue;
+	uint8_t regValue = 0;
+	Wire.beginTransmission(i2cAddress);
+	Wire.write(reg);
+	Wire.endTransmission();
+	Wire.requestFrom(i2cAddress,1);
+	if(Wire.available()){
+		regValue = Wire.read();
+	}
+	return regValue;
 }
 
 
 int16_t ADXL345_WE::readRegister16(uint8_t reg){
-  uint8_t MSByte = 0, LSByte = 0;
-  int16_t regValue = 0;
-  Wire.beginTransmission(i2cAddress);
-  Wire.write(reg);
-  Wire.endTransmission();
-  Wire.requestFrom(i2cAddress,2);
-  if(Wire.available()){
-    LSByte = Wire.read();
-    MSByte = Wire.read();
-  }
-  regValue = (MSByte<<8) + LSByte;
-  return regValue;
+	uint8_t MSByte = 0, LSByte = 0;
+	int16_t regValue = 0;
+	Wire.beginTransmission(i2cAddress);
+	Wire.write(reg);
+	Wire.endTransmission();
+	Wire.requestFrom(i2cAddress,2);
+	if(Wire.available()){
+		LSByte = Wire.read();
+		MSByte = Wire.read();
+	}
+	regValue = (MSByte<<8) + LSByte;
+	return regValue;
 }
 
-
+// This way of reading is needed for the FIFO
+uint64_t ADXL345_WE::readRegister3x16(uint8_t reg){    
+	uint8_t byte0 = 0, byte1 = 0, byte2 = 0, byte3 = 0, byte4 = 0, byte5 = 0;
+	uint64_t regValue = 0;
+	Wire.beginTransmission(i2cAddress);
+	Wire.write(reg);
+	Wire.endTransmission();
+	Wire.requestFrom(i2cAddress,6);
+	if(Wire.available()){
+		byte0 = Wire.read();
+		byte1 = Wire.read();
+		byte2 = Wire.read();
+		byte3 = Wire.read();
+		byte4 = Wire.read();
+		byte5 = Wire.read();
+	}
+	regValue = ((uint64_t) byte1<<40) + ((uint64_t) byte0<<32) +((uint64_t) byte3<<24) + 
+		   + ((uint64_t) byte2<<16) + ((uint64_t) byte5<<8) +  (uint64_t)byte4;
+	return regValue;
+}
 
 
 
