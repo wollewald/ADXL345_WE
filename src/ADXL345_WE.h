@@ -158,9 +158,9 @@ class ADXL345_WE
 {
 public: 
     /* Constructors */
-	
-	ADXL345_WE(int addr);
-	ADXL345_WE();
+    
+    ADXL345_WE(int addr);
+    ADXL345_WE();
     ADXL345_WE(TwoWire *w, int addr);
     ADXL345_WE(TwoWire *w);
         
@@ -229,7 +229,7 @@ public:
     
 private:
     TwoWire *_wire;
-	int i2cAddress;
+    int i2cAddress;
     uint8_t regVal;   // intermediate storage of register values
     xyzFloat rawVal;
     xyzFloat gVal;
