@@ -15,6 +15,12 @@
 const int int2Pin = 2;
 volatile bool in_activity = false; // in_activity: either activity or inactivity interrupt occured
 
+/* There are several ways to create your ADXL345 object:
+ * ADXL345_WE myAcc = ADXL345_WE()                -> uses Wire / I2C Address = 0x53
+ * ADXL345_WE myAcc = ADXL345_WE(ADXL345_I2CADDR) -> uses Wire / ADXL345_I2CADDR
+ * ADXL345_WE myAcc = ADXL345_WE(&wire2)          -> uses the TwoWire object wire2 / ADXL345_I2CADDR
+ * ADXL345_WE myAcc = ADXL345_WE(&wire2, ADXL345_I2CADDR) -> all together
+ */
 ADXL345_WE myAcc(ADXL345_I2CADDR);
 
 void setup() {
