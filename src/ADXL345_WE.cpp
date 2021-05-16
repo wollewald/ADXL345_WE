@@ -19,10 +19,22 @@
 /************  Constructors ************/
 
 ADXL345_WE::ADXL345_WE(int addr){
-    i2cAddress = addr;
+    _wire = &Wire;
+    i2cAddress = addr;   
 }
 
 ADXL345_WE::ADXL345_WE(){
+    _wire = &Wire;
+    i2cAddress = 0x53;   
+}
+
+ADXL345_WE::ADXL345_WE(TwoWire *w, int addr){
+    _wire = w;
+    i2cAddress = addr; 
+}
+
+ADXL345_WE::ADXL345_WE(TwoWire *w){
+    _wire = w;
     i2cAddress = 0x53;
 }
 
@@ -580,21 +592,21 @@ void ADXL345_WE::resetTrigger(){
 *************************************************/
 
 uint8_t ADXL345_WE::writeRegister(uint8_t reg, uint8_t val){
-    Wire.beginTransmission(i2cAddress);
-    Wire.write(reg);
-    Wire.write(val);
+    _wire->beginTransmission(i2cAddress);
+    _wire->write(reg);
+    _wire->write(val);
   
-    return Wire.endTransmission();
+    return _wire->endTransmission();
 }
   
 uint8_t ADXL345_WE::readRegister8(uint8_t reg){
     uint8_t regValue = 0;
-    Wire.beginTransmission(i2cAddress);
-    Wire.write(reg);
-    Wire.endTransmission();
-    Wire.requestFrom(i2cAddress,1);
-    if(Wire.available()){
-        regValue = Wire.read();
+    _wire->beginTransmission(i2cAddress);
+    _wire->write(reg);
+    _wire->endTransmission();
+    _wire->requestFrom(i2cAddress,1);
+    if(_wire->available()){
+        regValue = _wire->read();
     }
     return regValue;
 }
@@ -603,13 +615,13 @@ uint8_t ADXL345_WE::readRegister8(uint8_t reg){
 int16_t ADXL345_WE::readRegister16(uint8_t reg){
     uint8_t MSByte = 0, LSByte = 0;
     int16_t regValue = 0;
-    Wire.beginTransmission(i2cAddress);
-    Wire.write(reg);
-    Wire.endTransmission();
-    Wire.requestFrom(i2cAddress,2);
-    if(Wire.available()){
-        LSByte = Wire.read();
-        MSByte = Wire.read();
+    _wire->beginTransmission(i2cAddress);
+    _wire->write(reg);
+    _wire->endTransmission();
+    _wire->requestFrom(i2cAddress,2);
+    if(_wire->available()){
+        LSByte = _wire->read();
+        MSByte = _wire->read();
     }
     regValue = (MSByte<<8) + LSByte;
     return regValue;
@@ -619,17 +631,17 @@ int16_t ADXL345_WE::readRegister16(uint8_t reg){
 uint64_t ADXL345_WE::readRegister3x16(uint8_t reg){    
     uint8_t byte0 = 0, byte1 = 0, byte2 = 0, byte3 = 0, byte4 = 0, byte5 = 0;
     uint64_t regValue = 0;
-    Wire.beginTransmission(i2cAddress);
-    Wire.write(reg);
-    Wire.endTransmission();
-    Wire.requestFrom(i2cAddress,6);
-    if(Wire.available()){
-        byte0 = Wire.read();
-        byte1 = Wire.read();
-        byte2 = Wire.read();
-        byte3 = Wire.read();
-        byte4 = Wire.read();
-        byte5 = Wire.read();
+    _wire->beginTransmission(i2cAddress);
+    _wire->write(reg);
+    _wire->endTransmission();
+    _wire->requestFrom(i2cAddress,6);
+    if(_wire->available()){
+        byte0 = _wire->read();
+        byte1 = _wire->read();
+        byte2 = _wire->read();
+        byte3 = _wire->read();
+        byte4 = _wire->read();
+        byte5 = _wire->read();
     }
     regValue = ((uint64_t) byte1<<40) + ((uint64_t) byte0<<32) +((uint64_t) byte3<<24) + 
            + ((uint64_t) byte2<<16) + ((uint64_t) byte5<<8) +  (uint64_t)byte4;

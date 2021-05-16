@@ -158,10 +158,12 @@ class ADXL345_WE
 {
 public: 
     /* Constructors */
-    
-    ADXL345_WE(int addr);
-    ADXL345_WE();           //sets default I2C Address 0x53
-    
+	
+	ADXL345_WE(int addr);
+	ADXL345_WE();
+    ADXL345_WE(TwoWire *w, int addr);
+    ADXL345_WE(TwoWire *w);
+        
     /* Basic settings */
     
     bool init();
@@ -226,7 +228,8 @@ public:
     
     
 private:
-    int i2cAddress;
+    TwoWire *_wire;
+	int i2cAddress;
     uint8_t regVal;   // intermediate storage of register values
     xyzFloat rawVal;
     xyzFloat gVal;
