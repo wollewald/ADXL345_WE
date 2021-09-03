@@ -603,7 +603,7 @@ uint8_t ADXL345_WE::readRegister8(uint8_t reg){
     uint8_t regValue = 0;
     _wire->beginTransmission(i2cAddress);
     _wire->write(reg);
-    _wire->endTransmission();
+    _wire->endTransmission(false);
     _wire->requestFrom(i2cAddress,1);
     if(_wire->available()){
         regValue = _wire->read();
@@ -617,7 +617,7 @@ int16_t ADXL345_WE::readRegister16(uint8_t reg){
     int16_t regValue = 0;
     _wire->beginTransmission(i2cAddress);
     _wire->write(reg);
-    _wire->endTransmission();
+    _wire->endTransmission(false);
     _wire->requestFrom(i2cAddress,2);
     if(_wire->available()){
         LSByte = _wire->read();
@@ -633,7 +633,7 @@ uint64_t ADXL345_WE::readRegister3x16(uint8_t reg){
     uint64_t regValue = 0;
     _wire->beginTransmission(i2cAddress);
     _wire->write(reg);
-    _wire->endTransmission();
+    _wire->endTransmission(false);
     _wire->requestFrom(i2cAddress,6);
     if(_wire->available()){
         byte0 = _wire->read();
