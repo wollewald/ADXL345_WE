@@ -19,32 +19,53 @@
 /************  Constructors ************/
 
 ADXL345_WE::ADXL345_WE(int addr){
+    useSPI = false;
     _wire = &Wire;
     i2cAddress = addr;   
 }
 
 ADXL345_WE::ADXL345_WE(){
+    useSPI = false;
     _wire = &Wire;
     i2cAddress = 0x53;   
 }
 
 ADXL345_WE::ADXL345_WE(TwoWire *w, int addr){
+    useSPI = false;
     _wire = w;
     i2cAddress = addr; 
 }
 
 ADXL345_WE::ADXL345_WE(TwoWire *w){
+    useSPI = false;
     _wire = w;
     i2cAddress = 0x53;
+}
+
+ADXL345_WE::ADXL345_WE(SPIClass *s, int cs, bool spi){
+    useSPI = spi;
+    _spi = s;
+    csPin = cs;  
+}
+
+ADXL345_WE::ADXL345_WE(int cs, bool spi){
+    useSPI = spi;
+    _spi = &SPI;
+    csPin = cs;
 }
 
 /************ Basic settings ************/
     
 bool ADXL345_WE::init(){    
-    writeRegister(ADXL345_POWER_CTL,0);
-    if(!setMeasureMode(true)){
-        return false;
+    if(useSPI){
+        _spi->begin();
+        _spi->setDataMode(SPI_MODE3);
+        pinMode(csPin, OUTPUT);
+        digitalWrite(csPin, HIGH);
     }
+    writeRegister(ADXL345_POWER_CTL,0);
+    writeRegister(ADXL345_POWER_CTL, 16);   
+    setMeasureMode(true);
     corrFact.x = 1.0;
     corrFact.y = 1.0;
     corrFact.z = 1.0;
@@ -53,6 +74,9 @@ bool ADXL345_WE::init(){
     offsetVal.z = 0.0;
     writeRegister(ADXL345_DATA_FORMAT,0);
     setFullRes(true);
+    if(!((readRegister8(ADXL345_DATA_FORMAT)) & (1<<ADXL345_FULL_RES))){
+        return false;
+    }
     writeRegister(ADXL345_INT_ENABLE, 0);
     writeRegister(ADXL345_INT_MAP,0);
     writeRegister(ADXL345_TIME_INACT, 0);
@@ -66,7 +90,7 @@ bool ADXL345_WE::init(){
     readAndClearInterrupts();
     writeRegister(ADXL345_FIFO_CTL,0);
     writeRegister(ADXL345_FIFO_STATUS,0);
-    
+     
     return true;
 }
 
@@ -310,7 +334,7 @@ float ADXL345_WE::getRoll(){
 
 /************ Power, Sleep, Standby ************/ 
 
-bool ADXL345_WE::setMeasureMode(boolean measure){
+void ADXL345_WE::setMeasureMode(bool measure){
     regVal = readRegister8(ADXL345_POWER_CTL);
     if(measure){
         regVal |= (1<<ADXL345_MEASURE);
@@ -318,9 +342,7 @@ bool ADXL345_WE::setMeasureMode(boolean measure){
     else{
         regVal &= ~(1<<ADXL345_MEASURE);
     }
-    uint8_t ack = writeRegister(ADXL345_POWER_CTL, regVal);
-    
-    return (ack == 0);
+    writeRegister(ADXL345_POWER_CTL, regVal);
 }
 
 void ADXL345_WE::setSleep(bool sleep, adxl345_wUpFreq freq){
@@ -592,21 +614,39 @@ void ADXL345_WE::resetTrigger(){
 *************************************************/
 
 uint8_t ADXL345_WE::writeRegister(uint8_t reg, uint8_t val){
-    _wire->beginTransmission(i2cAddress);
-    _wire->write(reg);
-    _wire->write(val);
+    if(!useSPI){
+        _wire->beginTransmission(i2cAddress);
+        _wire->write(reg);
+        _wire->write(val);
   
-    return _wire->endTransmission();
+        return _wire->endTransmission();
+    }
+    else{
+        digitalWrite(csPin, LOW);
+        _spi->transfer(reg); 
+        _spi->transfer(val);
+        digitalWrite(csPin, HIGH);
+        return false; // to be amended
+    }
 }
   
 uint8_t ADXL345_WE::readRegister8(uint8_t reg){
     uint8_t regValue = 0;
-    _wire->beginTransmission(i2cAddress);
-    _wire->write(reg);
-    _wire->endTransmission(false);
-    _wire->requestFrom(i2cAddress,1);
-    if(_wire->available()){
-        regValue = _wire->read();
+    if(!useSPI){    
+        _wire->beginTransmission(i2cAddress);
+        _wire->write(reg);
+        _wire->endTransmission(false);
+        _wire->requestFrom(i2cAddress,1);
+        if(_wire->available()){
+            regValue = _wire->read();
+        }
+    }
+    else{
+        reg |= 0x80;
+        digitalWrite(csPin, LOW);
+        _spi->transfer(reg); 
+        regValue = _spi->transfer(0x00);
+        digitalWrite(csPin, HIGH);
     }
     return regValue;
 }
@@ -615,34 +655,60 @@ uint8_t ADXL345_WE::readRegister8(uint8_t reg){
 int16_t ADXL345_WE::readRegister16(uint8_t reg){
     uint8_t MSByte = 0, LSByte = 0;
     int16_t regValue = 0;
-    _wire->beginTransmission(i2cAddress);
-    _wire->write(reg);
-    _wire->endTransmission(false);
-    _wire->requestFrom(i2cAddress,2);
-    if(_wire->available()){
-        LSByte = _wire->read();
-        MSByte = _wire->read();
+    if(!useSPI){
+        _wire->beginTransmission(i2cAddress);
+        _wire->write(reg);
+        _wire->endTransmission(false);
+        _wire->requestFrom(i2cAddress,2);
+        if(_wire->available()){
+            LSByte = _wire->read();
+            MSByte = _wire->read();
+        }
     }
-    regValue = (MSByte<<8) + LSByte;
+    else{
+        reg = reg | 0x80;
+        reg = reg | 0x40;
+        digitalWrite(csPin, LOW);
+        _spi->transfer(reg); 
+        LSByte = _spi->transfer(0x00);
+        MSByte = _spi->transfer(0x00);
+        digitalWrite(csPin, HIGH);
+    }
+    regValue = (MSByte<<8) + LSByte;    
     return regValue;
 }
 
-// This way of reading is needed for the FIFO
 uint64_t ADXL345_WE::readRegister3x16(uint8_t reg){    
     uint8_t byte0 = 0, byte1 = 0, byte2 = 0, byte3 = 0, byte4 = 0, byte5 = 0;
     uint64_t regValue = 0;
-    _wire->beginTransmission(i2cAddress);
-    _wire->write(reg);
-    _wire->endTransmission(false);
-    _wire->requestFrom(i2cAddress,6);
-    if(_wire->available()){
-        byte0 = _wire->read();
-        byte1 = _wire->read();
-        byte2 = _wire->read();
-        byte3 = _wire->read();
-        byte4 = _wire->read();
-        byte5 = _wire->read();
+    if(!useSPI){
+        _wire->beginTransmission(i2cAddress);
+        _wire->write(reg);
+        _wire->endTransmission(false);
+        _wire->requestFrom(i2cAddress,6);
+        if(_wire->available()){
+            byte0 = _wire->read();
+            byte1 = _wire->read();
+            byte2 = _wire->read();
+            byte3 = _wire->read();
+            byte4 = _wire->read();
+            byte5 = _wire->read();
+        }
     }
+    else{
+        reg = reg | 0x80;
+        reg = reg | 0x40;
+        digitalWrite(csPin, LOW);
+        _spi->transfer(reg); 
+        byte0 = _spi->transfer(0x00);
+        byte1 = _spi->transfer(0x00);
+        byte2 = _spi->transfer(0x00);
+        byte3 = _spi->transfer(0x00);
+        byte4 = _spi->transfer(0x00);
+        byte5 = _spi->transfer(0x00);
+        digitalWrite(csPin, HIGH);
+    }
+        
     regValue = ((uint64_t) byte1<<40) + ((uint64_t) byte0<<32) +((uint64_t) byte3<<24) + 
            + ((uint64_t) byte2<<16) + ((uint64_t) byte5<<8) +  (uint64_t)byte4;
     return regValue;

@@ -26,6 +26,7 @@
 #endif
 
 #include <Wire.h>
+#include <SPI.h>
 
 /* registers */
 #define ADXL345_ADDRESS          0x53
@@ -163,6 +164,8 @@ public:
     ADXL345_WE();
     ADXL345_WE(TwoWire *w, int addr);
     ADXL345_WE(TwoWire *w);
+    ADXL345_WE(SPIClass *s, int cs, bool spi);
+    ADXL345_WE(int cs, bool spi);
         
     /* Basic settings */
     
@@ -195,7 +198,7 @@ public:
     
     /* Power, Sleep, Standby */ 
     
-    bool setMeasureMode(bool measure);
+    void setMeasureMode(bool measure);
     void setSleep(bool sleep, adxl345_wUpFreq freq);
     void setSleep(bool sleep);
     void setAutoSleep(bool autoSleep, adxl345_wUpFreq freq);
@@ -229,6 +232,7 @@ public:
     
 private:
     TwoWire *_wire;
+    SPIClass *_spi;
     int i2cAddress;
     uint8_t regVal;   // intermediate storage of register values
     xyzFloat rawVal;
@@ -237,6 +241,8 @@ private:
     xyzFloat offsetVal;
     xyzFloat angleOffsetVal;
     xyzFloat corrFact;
+    int csPin;
+    bool useSPI;
     int16_t rangeFactor;
     uint8_t writeRegister(uint8_t reg, uint8_t val);
     uint8_t readRegister8(uint8_t reg);
