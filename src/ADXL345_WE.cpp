@@ -584,7 +584,8 @@ String ADXL345_WE::getActTapStatusAsString(){
 /************ FIFO ************/
 
 void ADXL345_WE::setFifoParameters(adxl345_triggerInt intNumber, uint8_t samples){
-    regVal = 0;
+    regVal = readRegister8(ADXL345_FIFO_CTL);
+	regVal &= 0b11000000;
     regVal |= (samples-1);
     if(intNumber == ADXL345_TRIGGER_INT_2){
         regVal |= 0x20;
