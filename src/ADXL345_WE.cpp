@@ -450,7 +450,8 @@ void ADXL345_WE::setInterruptPolarity(uint8_t pol){
     else if(pol == ADXL345_ACT_LOW){
         regVal |= 0b00100000;
     }
-};
+    writeRegister(ADXL345_DATA_FORMAT, regVal);
+}
 
 void ADXL345_WE::deleteInterrupt(adxl345_int type){
     regVal = readRegister8(ADXL345_INT_ENABLE);
