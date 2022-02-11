@@ -72,6 +72,9 @@ bool ADXL345_WE::init(){
     offsetVal.x = 0.0;
     offsetVal.y = 0.0;
     offsetVal.z = 0.0;
+	angleOffsetVal.x = 0.0;
+	angleOffsetVal.y = 0.0;
+	angleOffsetVal.z = 0.0;
     writeRegister(ADXL345_DATA_FORMAT,0);
     setFullRes(true);
     if(!((readRegister8(ADXL345_DATA_FORMAT)) & (1<<ADXL345_FULL_RES))){
@@ -272,6 +275,14 @@ void ADXL345_WE::measureAngleOffsets(){
     angleOffsetVal.x = angleVal.x; 
     angleOffsetVal.y = angleVal.y;
     angleOffsetVal.z = angleVal.z;
+}
+
+xyzFloat ADXL345_WE::getAngleOffsets(){
+    return angleOffsetVal;
+}
+
+void ADXL345_WE::setAngleOffsets(xyzFloat aos){
+	angleOffsetVal = aos;
 }
 
 adxl345_orientation ADXL345_WE::getOrientation(){

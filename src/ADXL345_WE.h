@@ -191,6 +191,8 @@ public:
     /* Angles and Orientation */ 
     
     void measureAngleOffsets();
+    xyzFloat getAngleOffsets();
+    void setAngleOffsets(xyzFloat aos);
     adxl345_orientation getOrientation();
     String getOrientationAsString();
     float getPitch();
