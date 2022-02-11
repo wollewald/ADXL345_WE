@@ -58,6 +58,8 @@ getGValues	KEYWORD2
 getAngles	KEYWORD2
 getTilts	KEYWORD2
 measureAngleOffsets	KEYWORD2
+getAngleOffsets	KEYWORD2
+setAngleOffsets	KEYWORD2
 getOrientation	KEYWORD2
 getOrientationAsString	KEYWORD2
 getPitch	KEYWORD2
