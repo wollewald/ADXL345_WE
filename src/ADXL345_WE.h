@@ -170,6 +170,7 @@ public:
     /* Basic settings */
     
     bool init();
+    void setSPIClockSpeed(unsigned long clock);
     void setCorrFactors(float xMin, float xMax, float yMin, float yMax, float zMin, float zMax);
     void setDataRate(adxl345_dataRate rate);
     adxl345_dataRate getDataRate();
@@ -235,6 +236,7 @@ public:
 private:
     TwoWire *_wire;
     SPIClass *_spi;
+    SPISettings mySPISettings;
     int i2cAddress;
     uint8_t regVal;   // intermediate storage of register values
     xyzFloat rawVal;

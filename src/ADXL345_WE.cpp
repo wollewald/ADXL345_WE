@@ -59,7 +59,7 @@ ADXL345_WE::ADXL345_WE(int cs, bool spi){
 bool ADXL345_WE::init(){    
     if(useSPI){
         _spi->begin();
-        _spi->setDataMode(SPI_MODE3);
+        mySPISettings = SPISettings(8000000, MSBFIRST, SPI_MODE3);
         pinMode(csPin, OUTPUT);
         digitalWrite(csPin, HIGH);
     }
@@ -72,9 +72,9 @@ bool ADXL345_WE::init(){
     offsetVal.x = 0.0;
     offsetVal.y = 0.0;
     offsetVal.z = 0.0;
-	angleOffsetVal.x = 0.0;
-	angleOffsetVal.y = 0.0;
-	angleOffsetVal.z = 0.0;
+    angleOffsetVal.x = 0.0;
+    angleOffsetVal.y = 0.0;
+    angleOffsetVal.z = 0.0;
     writeRegister(ADXL345_DATA_FORMAT,0);
     setFullRes(true);
     if(!((readRegister8(ADXL345_DATA_FORMAT)) & (1<<ADXL345_FULL_RES))){
@@ -95,6 +95,10 @@ bool ADXL345_WE::init(){
     writeRegister(ADXL345_FIFO_STATUS,0);
      
     return true;
+}
+
+void ADXL345_WE::setSPIClockSpeed(unsigned long clock){
+    mySPISettings = SPISettings(clock, MSBFIRST, SPI_MODE3);
 }
 
 void ADXL345_WE::setCorrFactors(float xMin, float xMax, float yMin, float yMax, float zMin, float zMax){
@@ -282,7 +286,7 @@ xyzFloat ADXL345_WE::getAngleOffsets(){
 }
 
 void ADXL345_WE::setAngleOffsets(xyzFloat aos){
-	angleOffsetVal = aos;
+    angleOffsetVal = aos;
 }
 
 adxl345_orientation ADXL345_WE::getOrientation(){
@@ -597,7 +601,7 @@ String ADXL345_WE::getActTapStatusAsString(){
 
 void ADXL345_WE::setFifoParameters(adxl345_triggerInt intNumber, uint8_t samples){
     regVal = readRegister8(ADXL345_FIFO_CTL);
-	regVal &= 0b11000000;
+    regVal &= 0b11000000;
     regVal |= (samples-1);
     if(intNumber == ADXL345_TRIGGER_INT_2){
         regVal |= 0x20;
@@ -635,10 +639,12 @@ uint8_t ADXL345_WE::writeRegister(uint8_t reg, uint8_t val){
         return _wire->endTransmission();
     }
     else{
+        _spi->beginTransaction(mySPISettings);
         digitalWrite(csPin, LOW);
         _spi->transfer(reg); 
         _spi->transfer(val);
         digitalWrite(csPin, HIGH);
+        _spi->endTransaction();
         return false; // to be amended
     }
 }
@@ -656,10 +662,12 @@ uint8_t ADXL345_WE::readRegister8(uint8_t reg){
     }
     else{
         reg |= 0x80;
+        _spi->beginTransaction(mySPISettings);
         digitalWrite(csPin, LOW);
         _spi->transfer(reg); 
         regValue = _spi->transfer(0x00);
         digitalWrite(csPin, HIGH);
+        _spi->endTransaction();
     }
     return regValue;
 }
@@ -681,11 +689,13 @@ int16_t ADXL345_WE::readRegister16(uint8_t reg){
     else{
         reg = reg | 0x80;
         reg = reg | 0x40;
+        _spi->beginTransaction(mySPISettings);
         digitalWrite(csPin, LOW);
         _spi->transfer(reg); 
         LSByte = _spi->transfer(0x00);
         MSByte = _spi->transfer(0x00);
         digitalWrite(csPin, HIGH);
+        _spi->endTransaction();
     }
     regValue = (MSByte<<8) + LSByte;    
     return regValue;
@@ -711,6 +721,7 @@ uint64_t ADXL345_WE::readRegister3x16(uint8_t reg){
     else{
         reg = reg | 0x80;
         reg = reg | 0x40;
+        _spi->beginTransaction(mySPISettings);
         digitalWrite(csPin, LOW);
         _spi->transfer(reg); 
         byte0 = _spi->transfer(0x00);
@@ -720,6 +731,7 @@ uint64_t ADXL345_WE::readRegister3x16(uint8_t reg){
         byte4 = _spi->transfer(0x00);
         byte5 = _spi->transfer(0x00);
         digitalWrite(csPin, HIGH);
+        _spi->endTransaction();
     }
         
     regValue = ((uint64_t) byte1<<40) + ((uint64_t) byte0<<32) +((uint64_t) byte3<<24) + 
