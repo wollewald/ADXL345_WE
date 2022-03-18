@@ -43,6 +43,7 @@ xyzFloat	KEYWORD1
 #######################################
 
 init	KEYWORD2
+setSPIClockSpeed	KEYWORD2
 setCorrFactors	KEYWORD2
 setDataRate	KEYWORD2
 getDataRate	KEYWORD2
