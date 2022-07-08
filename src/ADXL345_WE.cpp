@@ -337,7 +337,7 @@ String ADXL345_WE::getOrientationAsString(){
 
 float ADXL345_WE::getPitch(){
     getGValues();
-    float pitch = (atan2(gVal.x, sqrt(gVal.x*gVal.y + gVal.z*gVal.z))*180.0)/M_PI;
+    float pitch = (atan2(-angleVal.x, sqrt(abs((angleVal.y*angleVal.y + angleVal.z*angleVal.z))))*180.0)/M_PI;
     return pitch;
 }
     
