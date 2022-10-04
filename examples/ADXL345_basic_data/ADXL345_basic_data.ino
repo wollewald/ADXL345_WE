@@ -52,8 +52,8 @@ void setup(){
   Serial.print("Data rate: ");
   Serial.print(myAcc.getDataRateAsString());
 
-/* In full resolution raw values the size of the raw values depend 
-    on the range: 2g = 10 bit; 4g = 11 bit; 8g = 12 bit; 16g =13 bit;
+/* In full resolution the size of the raw values depend on the range:
+    2g = 10 bit; 4g = 11 bit; 8g = 12 bit; 16g =13 bit;
     uncomment to change to 10 bit for all ranges. 
  */
   // myAcc.setFullRes(false);
