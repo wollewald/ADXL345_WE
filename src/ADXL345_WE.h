@@ -160,9 +160,9 @@ class ADXL345_WE
 public: 
     /* Constructors */
     
-    ADXL345_WE(int addr);
+    ADXL345_WE(uint8_t addr);
     ADXL345_WE();
-    ADXL345_WE(TwoWire *w, int addr);
+    ADXL345_WE(TwoWire *w, uint8_t addr);
     ADXL345_WE(TwoWire *w);
     ADXL345_WE(SPIClass *s, int cs, bool spi);
     ADXL345_WE(int cs, bool spi);
@@ -237,21 +237,17 @@ private:
     TwoWire *_wire;
     SPIClass *_spi;
     SPISettings mySPISettings;
-    int i2cAddress;
+    uint8_t i2cAddress;
     uint8_t regVal;   // intermediate storage of register values
-    xyzFloat rawVal;
-    xyzFloat gVal;
-    xyzFloat angleVal;
     xyzFloat offsetVal;
     xyzFloat angleOffsetVal;
     xyzFloat corrFact;
     int csPin;
     bool useSPI;
-    int16_t rangeFactor;
+    float rangeFactor;
     uint8_t writeRegister(uint8_t reg, uint8_t val);
     uint8_t readRegister8(uint8_t reg);
-    int16_t readRegister16(uint8_t reg);
-    uint64_t readRegister3x16(uint8_t reg);
+    void readMultipleRegisters(uint8_t reg, uint8_t count, uint8_t *buf);
     bool adxl345_lowRes;
 };
 

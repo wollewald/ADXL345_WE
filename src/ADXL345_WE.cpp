@@ -18,7 +18,7 @@
 
 /************  Constructors ************/
 
-ADXL345_WE::ADXL345_WE(int addr){
+ADXL345_WE::ADXL345_WE(uint8_t addr){
     useSPI = false;
     _wire = &Wire;
     i2cAddress = addr;   
@@ -30,7 +30,7 @@ ADXL345_WE::ADXL345_WE(){
     i2cAddress = 0x53;   
 }
 
-ADXL345_WE::ADXL345_WE(TwoWire *w, int addr){
+ADXL345_WE::ADXL345_WE(TwoWire *w, uint8_t addr){
     useSPI = false;
     _wire = w;
     i2cAddress = addr; 
@@ -66,6 +66,7 @@ bool ADXL345_WE::init(){
     writeRegister(ADXL345_POWER_CTL,0);
     writeRegister(ADXL345_POWER_CTL, 16);   
     setMeasureMode(true);
+    rangeFactor = 1.0;
     corrFact.x = 1.0;
     corrFact.y = 1.0;
     corrFact.z = 1.0;
@@ -206,27 +207,34 @@ String ADXL345_WE::getRangeAsString(){
 /************ x,y,z results ************/
 
 xyzFloat ADXL345_WE::getRawValues(){
-    rawVal.x = readRegister16(ADXL345_DATAX0);
-    rawVal.y = readRegister16(ADXL345_DATAY0);
-    rawVal.z = readRegister16(ADXL345_DATAZ0);
+    uint8_t rawData[6]; 
+    xyzFloat rawVal = {0.0, 0.0, 0.0};
+    readMultipleRegisters(ADXL345_DATAX0, 6, rawData);
+    rawVal.x = ((int16_t)((rawData[1] << 8) | rawData[0])) * 1.0;
+    rawVal.y = ((int16_t)((rawData[3] << 8) | rawData[2])) * 1.0;
+    rawVal.z = ((int16_t)((rawData[5] << 8) | rawData[4])) * 1.0;
+    
     return rawVal;
 }
 
 xyzFloat ADXL345_WE::getCorrectedRawValues(){
-    uint64_t xyzDataReg = readRegister3x16(ADXL345_DATAX0);
-    int16_t xRaw = (int16_t)((xyzDataReg >> 32) & 0xFFFF);
-    int16_t yRaw = (int16_t)((xyzDataReg >> 16) & 0xFFFF);
-    int16_t zRaw = (int16_t)(xyzDataReg & 0xFFFF);
-    
-    rawVal.x = xRaw - (offsetVal.x / rangeFactor);
-    rawVal.y = yRaw - (offsetVal.y / rangeFactor);
-    rawVal.z = zRaw - (offsetVal.z / rangeFactor);
+    uint8_t rawData[6]; 
+    xyzFloat rawVal = {0.0, 0.0, 0.0};
+    readMultipleRegisters(ADXL345_DATAX0, 6, rawData);
+    int16_t xRaw = ((int16_t)((rawData[1] << 8) | rawData[0]));
+    int16_t yRaw = ((int16_t)((rawData[3] << 8) | rawData[2]));
+    int16_t zRaw = ((int16_t)((rawData[5] << 8) | rawData[4]));
+        
+    rawVal.x = xRaw * 1.0 - (offsetVal.x / rangeFactor);
+    rawVal.y = yRaw * 1.0 - (offsetVal.y / rangeFactor);
+    rawVal.z = zRaw * 1.0 - (offsetVal.z / rangeFactor);
     
     return rawVal;
 }
 
 xyzFloat ADXL345_WE::getGValues(){
-    getCorrectedRawValues();
+    xyzFloat rawVal = getCorrectedRawValues();
+    xyzFloat gVal = {0.0, 0.0, 0.0};
     gVal.x = rawVal.x * MILLI_G_PER_LSB * rangeFactor * corrFact.x / 1000.0;
     gVal.y = rawVal.y * MILLI_G_PER_LSB * rangeFactor * corrFact.y / 1000.0;
     gVal.z = rawVal.z * MILLI_G_PER_LSB * rangeFactor * corrFact.z / 1000.0;
@@ -234,7 +242,8 @@ xyzFloat ADXL345_WE::getGValues(){
 }
 
 xyzFloat ADXL345_WE::getAngles(){
-    getGValues();
+    xyzFloat gVal = getGValues();
+    xyzFloat angleVal = {0.0, 0.0, 0.0};
     if(gVal.x > 1){
         gVal.x = 1;
     }
@@ -263,11 +272,10 @@ xyzFloat ADXL345_WE::getAngles(){
 }
 
 xyzFloat ADXL345_WE::getCorrAngles(){
-    getAngles();
-    xyzFloat corrAnglesVal;
-    corrAnglesVal.x = angleVal.x - angleOffsetVal.x;
-    corrAnglesVal.y = angleVal.y - angleOffsetVal.y;
-    corrAnglesVal.z = angleVal.z - angleOffsetVal.z;
+    xyzFloat corrAnglesVal = getAngles();
+    corrAnglesVal.x -= angleOffsetVal.x;
+    corrAnglesVal.y -= angleOffsetVal.y;
+    corrAnglesVal.z -= angleOffsetVal.z;
         
     return corrAnglesVal;
 }
@@ -275,10 +283,7 @@ xyzFloat ADXL345_WE::getCorrAngles(){
 /************ Angles and Orientation ************/ 
 
 void ADXL345_WE::measureAngleOffsets(){
-    getAngles();
-    angleOffsetVal.x = angleVal.x; 
-    angleOffsetVal.y = angleVal.y;
-    angleOffsetVal.z = angleVal.z;
+    angleOffsetVal = getAngles();
 }
 
 xyzFloat ADXL345_WE::getAngleOffsets(){
@@ -291,7 +296,7 @@ void ADXL345_WE::setAngleOffsets(xyzFloat aos){
 
 adxl345_orientation ADXL345_WE::getOrientation(){
     adxl345_orientation orientation = FLAT;
-    getAngles();
+    xyzFloat angleVal = getAngles();
     if(abs(angleVal.x) < 45){      // |x| < 45
         if(abs(angleVal.y) < 45){      // |y| < 45
             if(angleVal.z > 0){          //  z  > 0
@@ -336,13 +341,13 @@ String ADXL345_WE::getOrientationAsString(){
 }
 
 float ADXL345_WE::getPitch(){
-    getGValues();
-    float pitch = (atan2(-angleVal.x, sqrt(abs((angleVal.y*angleVal.y + angleVal.z*angleVal.z))))*180.0)/M_PI;
+    xyzFloat gVal = getGValues();
+    float pitch = (atan2(-gVal.x, sqrt(abs((gVal.y*gVal.y + gVal.z*gVal.z))))*180.0)/M_PI;
     return pitch;
 }
     
 float ADXL345_WE::getRoll(){
-    getGValues();
+    xyzFloat gVal = getGValues();
     float roll = (atan2(gVal.y, gVal.z)*180.0)/M_PI;
     return roll;
 }
@@ -655,7 +660,7 @@ uint8_t ADXL345_WE::readRegister8(uint8_t reg){
         _wire->beginTransmission(i2cAddress);
         _wire->write(reg);
         _wire->endTransmission(false);
-        _wire->requestFrom(i2cAddress,1);
+        _wire->requestFrom(i2cAddress,(uint8_t)1);
         if(_wire->available()){
             regValue = _wire->read();
         }
@@ -672,19 +677,15 @@ uint8_t ADXL345_WE::readRegister8(uint8_t reg){
     return regValue;
 }
 
-
-int16_t ADXL345_WE::readRegister16(uint8_t reg){
-    uint8_t MSByte = 0, LSByte = 0;
-    int16_t regValue = 0;
+void ADXL345_WE::readMultipleRegisters(uint8_t reg, uint8_t count, uint8_t *buf){
     if(!useSPI){
         _wire->beginTransmission(i2cAddress);
         _wire->write(reg);
         _wire->endTransmission(false);
-        _wire->requestFrom(i2cAddress,2);
-        if(_wire->available()){
-            LSByte = _wire->read();
-            MSByte = _wire->read();
-        }
+        _wire->requestFrom(i2cAddress,count);
+        for(int i=0; i<count; i++){
+            buf[i] = _wire->read();
+        }    
     }
     else{
         reg = reg | 0x80;
@@ -692,52 +693,12 @@ int16_t ADXL345_WE::readRegister16(uint8_t reg){
         _spi->beginTransaction(mySPISettings);
         digitalWrite(csPin, LOW);
         _spi->transfer(reg); 
-        LSByte = _spi->transfer(0x00);
-        MSByte = _spi->transfer(0x00);
-        digitalWrite(csPin, HIGH);
-        _spi->endTransaction();
-    }
-    regValue = (MSByte<<8) + LSByte;    
-    return regValue;
-}
-
-uint64_t ADXL345_WE::readRegister3x16(uint8_t reg){    
-    uint8_t byte0 = 0, byte1 = 0, byte2 = 0, byte3 = 0, byte4 = 0, byte5 = 0;
-    uint64_t regValue = 0;
-    if(!useSPI){
-        _wire->beginTransmission(i2cAddress);
-        _wire->write(reg);
-        _wire->endTransmission(false);
-        _wire->requestFrom(i2cAddress,6);
-        if(_wire->available()){
-            byte0 = _wire->read();
-            byte1 = _wire->read();
-            byte2 = _wire->read();
-            byte3 = _wire->read();
-            byte4 = _wire->read();
-            byte5 = _wire->read();
+        for(int i=0; i<count; i++){
+            buf[i] = _spi->transfer(0x00);
         }
-    }
-    else{
-        reg = reg | 0x80;
-        reg = reg | 0x40;
-        _spi->beginTransaction(mySPISettings);
-        digitalWrite(csPin, LOW);
-        _spi->transfer(reg); 
-        byte0 = _spi->transfer(0x00);
-        byte1 = _spi->transfer(0x00);
-        byte2 = _spi->transfer(0x00);
-        byte3 = _spi->transfer(0x00);
-        byte4 = _spi->transfer(0x00);
-        byte5 = _spi->transfer(0x00);
         digitalWrite(csPin, HIGH);
         _spi->endTransaction();
     }
-        
-    regValue = ((uint64_t) byte1<<40) + ((uint64_t) byte0<<32) +((uint64_t) byte3<<24) + 
-           + ((uint64_t) byte2<<16) + ((uint64_t) byte5<<8) +  (uint64_t)byte4;
-    return regValue;
 }
-
 
 
