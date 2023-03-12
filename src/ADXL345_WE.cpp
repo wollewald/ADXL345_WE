@@ -462,12 +462,12 @@ void ADXL345_WE::setLinkBit(bool link){
 }
 
 void ADXL345_WE::setFreeFallThresholds(float ffg, float fft){
-    regVal = static_cast<uint16_t>(round(ffg / 0.0625));
+    regVal = static_cast<uint8_t>(round(ffg / 0.0625));
     if(regVal<1){
         regVal = 1;
     }
     writeRegister(ADXL345_THRESH_FF, regVal);
-    regVal = static_cast<uint16_t>(round(fft / 5));
+    regVal = static_cast<uint8_t>(round(fft / 5));
     if(regVal<1){
         regVal = 1;
     }
@@ -475,7 +475,7 @@ void ADXL345_WE::setFreeFallThresholds(float ffg, float fft){
 }
 
 void ADXL345_WE::setActivityParameters(adxl345_dcAcMode mode, adxl345_actTapSet axes, float threshold){
-    regVal = static_cast<uint16_t>(round(threshold / 0.0625));
+    regVal = static_cast<uint8_t>(round(threshold / 0.0625));
     if(regVal<1){
         regVal = 1;
     }
@@ -484,12 +484,12 @@ void ADXL345_WE::setActivityParameters(adxl345_dcAcMode mode, adxl345_actTapSet 
 
     regVal = readRegister8(ADXL345_ACT_INACT_CTL);
     regVal &= 0x0F;
-    regVal |= (static_cast<uint16_t>(mode) + static_cast<uint16_t>(axes))<<4;
+    regVal |= (static_cast<uint8_t>(mode) + static_cast<uint8_t>(axes))<<4;
     writeRegister(ADXL345_ACT_INACT_CTL, regVal);
 }
 
 void ADXL345_WE::setInactivityParameters(adxl345_dcAcMode mode, adxl345_actTapSet axes, float threshold, uint8_t inactTime){
-    regVal = static_cast<uint16_t>(round(threshold / 0.0625));
+    regVal = static_cast<uint8_t>(round(threshold / 0.0625));
     if(regVal<1){
         regVal = 1;
     }
@@ -497,7 +497,7 @@ void ADXL345_WE::setInactivityParameters(adxl345_dcAcMode mode, adxl345_actTapSe
 
     regVal = readRegister8(ADXL345_ACT_INACT_CTL);
     regVal &= 0xF0;
-    regVal |= static_cast<uint16_t>(mode) + static_cast<uint16_t>(axes);
+    regVal |= static_cast<uint8_t>(mode) + static_cast<uint16_t>(axes);
     writeRegister(ADXL345_ACT_INACT_CTL, regVal);
 
     writeRegister(ADXL345_TIME_INACT, inactTime);
@@ -506,22 +506,22 @@ void ADXL345_WE::setInactivityParameters(adxl345_dcAcMode mode, adxl345_actTapSe
 void ADXL345_WE::setGeneralTapParameters(adxl345_actTapSet axes, float threshold, float duration, float latent){
     regVal = readRegister8(ADXL345_TAP_AXES);
     regVal &= 0b11111000;
-    regVal |= static_cast<uint16_t>(axes);
+    regVal |= static_cast<uint8_t>(axes);
     writeRegister(ADXL345_TAP_AXES, regVal);
     
-    regVal = static_cast<uint16_t>(round(threshold / 0.0625));
+    regVal = static_cast<uint8_t>(round(threshold / 0.0625));
     if(regVal<1){
         regVal = 1;
     }
     writeRegister(ADXL345_THRESH_TAP,regVal);
     
-    regVal = static_cast<uint16_t>(round(duration / 0.625));
+    regVal = static_cast<uint8_t>(round(duration / 0.625));
     if(regVal<1){
         regVal = 1;
     }
     writeRegister(ADXL345_DUR, regVal);
     
-    regVal = static_cast<uint16_t>(round(latent / 1.25));
+    regVal = static_cast<uint8_t>(round(latent / 1.25));
     if(regVal<1){
         regVal = 1;
     }
@@ -538,7 +538,7 @@ void ADXL345_WE::setAdditionalDoubleTapParameters(bool suppress, float window){
     }
     writeRegister(ADXL345_TAP_AXES, regVal);
     
-    regVal = static_cast<uint16_t>(round(window / 1.25));
+    regVal = static_cast<uint8_t>(round(window / 1.25));
     writeRegister(ADXL345_WINDOW, regVal);
 }
 
@@ -622,7 +622,7 @@ uint8_t ADXL345_WE::readRegister8(uint8_t reg){
         _wire->beginTransmission(i2cAddress);
         _wire->write(reg);
         _wire->endTransmission(false);
-        _wire->requestFrom(i2cAddress, static_cast<uint16_t>(1));
+        _wire->requestFrom(i2cAddress, static_cast<uint8_t>(1));
         if(_wire->available()){
             regValue = _wire->read();
         }
