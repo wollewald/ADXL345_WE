@@ -20,7 +20,12 @@
     
 bool ADXL345_WE::init(){    
     if(useSPI){
-        _spi->begin();
+        if(mosiPin == 999){
+            _spi->begin();
+        }
+        else{
+            _spi->begin(sckPin, misoPin, mosiPin, csPin);
+        }
         mySPISettings = SPISettings(8000000, MSBFIRST, SPI_MODE3);
         pinMode(csPin, OUTPUT);
         digitalWrite(csPin, HIGH);
