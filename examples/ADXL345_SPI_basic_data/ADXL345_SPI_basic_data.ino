@@ -12,13 +12,20 @@
 
 #include<ADXL345_WE.h>
 #include<SPI.h>
-#define CS_PIN 10   // Chip Select Pin
-bool spi = true;    // flag that SPI shall be used
+#define CS_PIN 5   // Chip Select Pin
+/* In case you want to change the default SPI pins (e.g. for ESP32), uncomment and adjust:
+  #define MOSI_PIN 22
+  #define MISO_PIN 17
+  #define SCK_PIN 16
+*/
+bool spi = true;    // flag indicating that SPI shall be used
 
-/* There are two ways to create your ADXL345 object in SPI mode:
+/* There are three ways to create your ADXL345 object in SPI mode:
  * ADXL345_WE myAcc = ADXL345_WE(CS_PIN, spi)     -> uses SPI, spi is just a flag, see SPI example
  * ADXL345_WE myAcc = ADXL345_WE(&SPI, CS_PIN, spi) -> uses SPI / passes the SPI object, spi is just a flag, see SPI example
+ * ADXL345_WE myAcc = ADXL345_WE(&SPI, CS_PIN, spi, MOSI_PIN, MISO_PIN, SCK_PIN) -> like the latter, but also changes the SPI pins  
  */
+
 ADXL345_WE myAcc = ADXL345_WE(CS_PIN, spi);
 
 void setup(){
