@@ -23,9 +23,11 @@ bool ADXL345_WE::init(){
         if(mosiPin == 999){
             _spi->begin();
         }
+#ifdef ESP32
         else{
             _spi->begin(sckPin, misoPin, mosiPin, csPin);
         }
+#endif
         mySPISettings = SPISettings(8000000, MSBFIRST, SPI_MODE3);
         pinMode(csPin, OUTPUT);
         digitalWrite(csPin, HIGH);
