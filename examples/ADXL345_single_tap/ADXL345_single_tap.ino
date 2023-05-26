@@ -109,6 +109,7 @@ void setup() {
     You can delete interrupts with deleteInterrupt(type);
 */ 
   myAcc.setInterrupt(ADXL345_SINGLE_TAP, INT_PIN_2); 
+  myAcc.readAndClearInterrupts();
 }
 
 /* In the main loop some checks are done:
