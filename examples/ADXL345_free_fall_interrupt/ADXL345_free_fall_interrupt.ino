@@ -96,7 +96,6 @@ void setup(){
   
   attachInterrupt(digitalPinToInterrupt(int2Pin), freeFallISR, RISING); 
   myAcc.readAndClearInterrupts();
-  freeFall=false; 
 }
 
 void loop() {
