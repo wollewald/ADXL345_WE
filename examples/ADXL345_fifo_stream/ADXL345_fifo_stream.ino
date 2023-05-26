@@ -120,6 +120,9 @@ void setup() {
     ADXL345_BYPASS   -  no FIFO
 */     
   myAcc.setFifoMode(ADXL345_STREAM);
+  
+  myAcc.readAndClearInterrupts();
+  event = false;
 
   Serial.println("Waiting for Activity Event - I propose to slowly turn the ADXL345");
 }
