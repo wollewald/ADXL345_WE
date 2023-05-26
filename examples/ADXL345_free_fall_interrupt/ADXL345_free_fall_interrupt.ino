@@ -95,6 +95,7 @@ void setup(){
   myAcc.setInterrupt(ADXL345_FREEFALL, INT_PIN_2);
   
   attachInterrupt(digitalPinToInterrupt(int2Pin), freeFallISR, RISING); 
+  myAcc.readAndClearInterrupts();
   freeFall=false; 
 }
 
