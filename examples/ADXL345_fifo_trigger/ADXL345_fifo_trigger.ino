@@ -124,7 +124,6 @@ void setup() {
   myAcc.setFifoMode(ADXL345_TRIGGER);
 
   myAcc.readAndClearInterrupts();
-  event = false;
 
   Serial.println("Waiting for Activity Event");
 }
