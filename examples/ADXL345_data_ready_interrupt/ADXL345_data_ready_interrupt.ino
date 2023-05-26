@@ -107,6 +107,7 @@ void loop() {
   // you see here is no delay to control the output rate
   if(dataReady==true){
     xyzFloat g = myAcc.getGValues();
+    // dataReady = false; // uncomment, if you want capture next interrupts
       
     Serial.print("g-x   = ");
     Serial.print(g.x);
@@ -115,7 +116,7 @@ void loop() {
     Serial.print("  |  g-z   = ");
     Serial.println(g.z);
   
-    dataReady = false;
+    dataReady = false; // comment, if you have set dataReady to false before
   }  
 }
 
