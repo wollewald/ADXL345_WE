@@ -92,6 +92,8 @@ void setup(){
     You can delete interrupts with deleteInterrupt(type);
 */
   myAcc.setInterrupt(ADXL345_DATA_READY, INT_PIN_2); 
+  myAcc.readAndClearInterrupts();
+  dataReady = false;
 }
 
 /* In the following loop there is only one interrupt type that can occur on INT2.
