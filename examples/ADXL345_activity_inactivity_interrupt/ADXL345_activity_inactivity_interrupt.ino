@@ -126,7 +126,7 @@ void setup() {
 */
   myAcc.setInterrupt(ADXL345_ACTIVITY, INT_PIN_2);
   myAcc.setInterrupt(ADXL345_INACTIVITY, INT_PIN_2);
-  
+  myAcc.readAndClearInterrupts();  
 }
 
 /* In the main loop some checks are done:
