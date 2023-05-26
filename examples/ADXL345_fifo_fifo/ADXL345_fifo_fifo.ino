@@ -104,7 +104,8 @@ void setup() {
                         is kept in the FIFO and further samples are taken after the event until FIFO is full again. 
     ADXL345_BYPASS   -  no FIFO
 */   
-  myAcc.setFifoMode(ADXL345_FIFO);
+  myAcc.setFifoMode(ADXL345_FIFO); 
+  myAcc.readAndClearInterrupts();
 }
 
 void loop() {
