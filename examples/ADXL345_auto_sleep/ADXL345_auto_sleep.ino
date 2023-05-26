@@ -130,6 +130,7 @@ void setup() {
 */
   myAcc.setAutoSleep(true, ADXL345_WUP_FQ_1);
   // alternative: myAcc.setAutoSleep(true/false) without changing the wake up frequency.
+  myAcc.readAndClearInterrupts();
 }
 
 void loop() {
