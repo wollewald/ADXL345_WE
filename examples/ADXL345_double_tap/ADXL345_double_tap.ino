@@ -123,7 +123,6 @@ void setup() {
   myAcc.setInterrupt(ADXL345_SINGLE_TAP, INT_PIN_2);
   myAcc.setInterrupt(ADXL345_DOUBLE_TAP, INT_PIN_2);
   myAcc.readAndClearInterrupts();
-  dataReady = false;
 }
 
 /* In the main loop some checks are done:
