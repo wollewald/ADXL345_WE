@@ -122,7 +122,6 @@ void setup() {
   myAcc.setFifoMode(ADXL345_STREAM);
   
   myAcc.readAndClearInterrupts();
-  event = false;
 
   Serial.println("Waiting for Activity Event - I propose to slowly turn the ADXL345");
 }
