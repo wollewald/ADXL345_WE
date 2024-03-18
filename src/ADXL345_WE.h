@@ -216,6 +216,7 @@ class ADXL345_WE
         void setAutoSleep(bool autoSleep);
         bool isAsleep();
         void setLowPower(bool lowpwr);
+        bool isLowPower();
         
         /* Interrupts */
         
