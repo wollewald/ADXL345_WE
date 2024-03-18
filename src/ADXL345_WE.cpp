@@ -413,6 +413,10 @@ void ADXL345_WE::setLowPower(bool lowpwr){
     }
     writeRegister(ADXL345_BW_RATE, regVal);
 }
+
+bool ADXL345_WE::isLowPower(){
+    return readRegister8(ADXL345_BW_RATE) & (1<<ADXL345_LOW_POWER);
+}
             
 /************ Interrupts ************/
 
