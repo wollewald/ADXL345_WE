@@ -35,7 +35,7 @@ void setup(){
     Serial.println("ADXL345 not connected!");
   }
 
-/* You can set the SPI clock speed. Default is 8 MHz. */
+/* You can set the SPI clock speed. Default is 5 MHz. */
 //  myAcc.setSPIClockSpeed(4000000);
    
 /* Choose the data rate         Hz
