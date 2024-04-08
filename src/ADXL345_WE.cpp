@@ -28,7 +28,7 @@ bool ADXL345_WE::init(){
             _spi->begin(sckPin, misoPin, mosiPin, csPin);
         }
 #endif
-        mySPISettings = SPISettings(8000000, MSBFIRST, SPI_MODE3);
+        mySPISettings = SPISettings(5000000, MSBFIRST, SPI_MODE3);
         pinMode(csPin, OUTPUT);
         digitalWrite(csPin, HIGH);
     }
