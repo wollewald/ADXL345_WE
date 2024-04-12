@@ -32,3 +32,14 @@ If you are not so much experienced with the ADXL345, I recommend to work through
 To develop this library I have worked with a ADXL345 module. It should also work with the bare ADXL345 IC. For the module I have noticed that the power consumption is much higher than mentioned in the data sheet. I think the issue is the voltage converter on the module. You can reduce the power consumption by choosing 3.3 volts instead of 5 volts. At least this worked with my module. 
 
 If you like my library please give it a star. If you don't like it I would be happy to get feedback. And if you find bugs I will try to eliminate them as quickly as possible. 
+
+<h2>If SPI does not work</h2>
+
+My library has implemented SPI 4-Wire. Some modules have SDO connected GND via an 0 ohm resistor. With this resistor only SPI 3-Wire would work. Your options are:
+
+1) Remove the 0 ohm resistor connected to SDO (R4 on my module)
+2) Replace the 0 ohm resistor connected to SDO by an internal or external pull-down resistor of 4.7 kohm or 10 kohm
+3) Find another library which supports SPI 3-Wire
+
+![ADXL345_hack](https://github.com/wollewald/ADXL345_WE/assets/41305162/2fc39482-70f7-4de1-ac0b-2e27f28ac15e)
+
