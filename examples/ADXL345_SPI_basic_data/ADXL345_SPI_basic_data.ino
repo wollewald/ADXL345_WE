@@ -17,8 +17,9 @@
   #define MOSI_PIN 22
   #define MISO_PIN 17
   #define SCK_PIN 16
-  If you use an ESP8266, the standard CS Pin (e.g. D8/GPIO15 on a WEMOS D1 mini or NodeMCU) might not work since it has a pull-up
-  resistor on most ADXL345 modules. If D8 is high at reset, the ESP8266 will not boot. Choose a different pin as CS!  
+  If you use an ESP8266, the standard CS Pin (e.g. D8/GPIO15 on a WEMOS D1 mini or NodeMCU) might not work since the CS pin of 
+  the ADXL345 has a pull-up resistor on most modules. If D8 is high at reset, the ESP8266 will not boot. In that case choose a 
+  different pin as CS!  
 */
 bool spi = true;    // flag indicating that SPI shall be used
 
