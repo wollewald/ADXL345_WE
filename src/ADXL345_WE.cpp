@@ -45,9 +45,10 @@ bool ADXL345_WE::init(){
     angleOffsetVal.x = 0.0;
     angleOffsetVal.y = 0.0;
     angleOffsetVal.z = 0.0;
-    writeRegister(ADXL345_DATA_FORMAT,0);
-    setFullRes(true);
-    if(!((readRegister8(ADXL345_DATA_FORMAT)) & (1<<ADXL345_FULL_RES))){
+    writeRegister(ADXL345_DATA_FORMAT,0); 
+    setFullRes(true); 
+    uint8_t ctrlVal = readRegister8(ADXL345_DATA_FORMAT);
+    if(ctrlVal != 0b1000){
         return false;
     }
     writeRegister(ADXL345_INT_ENABLE, 0);
