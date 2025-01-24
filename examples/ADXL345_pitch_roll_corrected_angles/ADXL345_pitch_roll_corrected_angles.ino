@@ -27,7 +27,7 @@ ADXL345_WE myAcc = ADXL345_WE(ADXL345_I2CADDR);
 
 void setup(){
   Wire.begin();
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("ADXL345 Sketch - Pitch and Roll vs. Corrected Angles");
   Serial.println();
   if(!myAcc.init()){
@@ -86,8 +86,10 @@ void setup(){
 }
 
 void loop() {
-  //xyzFloat g = myAcc.getGValues();
-  xyzFloat corrAngles = myAcc.getCorrAngles();
+  //xyzFloat g;
+  //myAcc.getGValues(&g);
+  xyzFloat corrAngles;
+  myAcc.getCorrAngles(&corrAngles);
   
 /* Corrected angles use corrected raws and an extra angle
     offset. The method provides quite precise values for x/y 
