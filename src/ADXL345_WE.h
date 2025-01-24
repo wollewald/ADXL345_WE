@@ -27,6 +27,7 @@
 
 #include <Wire.h>
 #include <SPI.h>
+#include "xyzFloat.h"
 
 /* Definitions */
 
@@ -108,13 +109,6 @@ typedef enum ADXL345_TRIGGER_INT {
     ADXL345_TRIGGER_INT_1, ADXL345_TRIGGER_INT_2
 } adxl345_triggerInt;
 
-struct xyzFloat {
-    float x;
-    float y;
-    float z;
-};
-
-
 class ADXL345_WE
 {
     public: 
@@ -191,14 +185,14 @@ class ADXL345_WE
         
         /* x,y,z results */
             
-        xyzFloat getRawValues();
-        xyzFloat getCorrectedRawValues();
-        xyzFloat getGValues();
-        xyzFloat getAngles();
-        xyzFloat getCorrAngles();
+        void getRawValues(xyzFloat *rawVal);
+        void getCorrectedRawValues(xyzFloat *rawVal);
+        void getGValues(xyzFloat *gVal);
             
         /* Angles and Orientation */ 
         
+        void getAngles(xyzFloat *angleVal);
+        void getCorrAngles(xyzFloat *corrAngleVal);
         void measureAngleOffsets();
         xyzFloat getAngleOffsets();
         void setAngleOffsets(xyzFloat aos);
@@ -244,7 +238,8 @@ class ADXL345_WE
     protected:
         TwoWire *_wire;
         SPIClass *_spi;
-        SPISettings mySPISettings;
+        SPISettings mySPISettings = SPISettings();
+        unsigned long spiClock = 5000000;
         uint8_t i2cAddress;
         uint8_t regVal;   // intermediate storage of register values
         xyzFloat offsetVal;

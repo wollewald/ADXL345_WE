@@ -28,23 +28,17 @@ bool ADXL345_WE::init(){
             _spi->begin(sckPin, misoPin, mosiPin, csPin);
         }
 #endif
-        mySPISettings = SPISettings(5000000, MSBFIRST, SPI_MODE3);
+        setSPIClockSpeed(spiClock);
         pinMode(csPin, OUTPUT);
         digitalWrite(csPin, HIGH);
     }
-    writeRegister(ADXL345_POWER_CTL,0);
+    writeRegister(ADXL345_POWER_CTL, 0);
     writeRegister(ADXL345_POWER_CTL, 16);   
     setMeasureMode(true);
     rangeFactor = 1.0;
-    corrFact.x = 1.0;
-    corrFact.y = 1.0;
-    corrFact.z = 1.0;
-    offsetVal.x = 0.0;
-    offsetVal.y = 0.0;
-    offsetVal.z = 0.0;
-    angleOffsetVal.x = 0.0;
-    angleOffsetVal.y = 0.0;
-    angleOffsetVal.z = 0.0;
+    corrFact = {1.0, 1.0, 1.0};
+    offsetVal = {0.0, 0.0, 0.0};
+    angleOffsetVal = {0.0, 0.0, 0.0};
     writeRegister(ADXL345_DATA_FORMAT,0); 
     setFullRes(true); 
     uint8_t ctrlVal = readRegister8(ADXL345_DATA_FORMAT);
@@ -68,8 +62,9 @@ bool ADXL345_WE::init(){
     return true;
 }
 
-void ADXL345_WE::setSPIClockSpeed(unsigned long clock){
-    mySPISettings = SPISettings(clock, MSBFIRST, SPI_MODE3);
+void ADXL345_WE::setSPIClockSpeed(unsigned long clock = 5000000){
+    spiClock = clock;
+    mySPISettings = SPISettings(spiClock, MSBFIRST, SPI_MODE3);
 }
 
 void ADXL345_WE::setCorrFactors(float xMin, float xMax, float yMin, float yMax, float zMin, float zMax){
@@ -92,30 +87,30 @@ adxl345_dataRate ADXL345_WE::getDataRate(){
     return (adxl345_dataRate)(readRegister8(ADXL345_BW_RATE) & 0x0F);
 }
 
+
 String ADXL345_WE::getDataRateAsString(){
     adxl345_dataRate dataRate = (adxl345_dataRate)(readRegister8(ADXL345_BW_RATE) & 0x0F);
     String returnString = "";
     
     switch(dataRate) {
-        case ADXL345_DATA_RATE_3200: returnString = "3200 Hz"; break;
-        case ADXL345_DATA_RATE_1600: returnString = "1600 Hz"; break;
-        case ADXL345_DATA_RATE_800:  returnString = "800 Hz";  break;
-        case ADXL345_DATA_RATE_400:  returnString = "400 Hz";  break;
-        case ADXL345_DATA_RATE_200:  returnString = "200 Hz";  break;
-        case ADXL345_DATA_RATE_100:  returnString = "100 Hz";  break;
-        case ADXL345_DATA_RATE_50:   returnString = "50 Hz";   break;
-        case ADXL345_DATA_RATE_25:   returnString = "25 Hz";   break;
-        case ADXL345_DATA_RATE_12_5: returnString = "12.5 Hz"; break;
-        case ADXL345_DATA_RATE_6_25: returnString = "6.25 Hz"; break;
-        case ADXL345_DATA_RATE_3_13: returnString = "3.13 Hz"; break;
-        case ADXL345_DATA_RATE_1_56: returnString = "1.56 Hz"; break;
-        case ADXL345_DATA_RATE_0_78: returnString = "0.78 Hz"; break;
-        case ADXL345_DATA_RATE_0_39: returnString = "0.39 Hz"; break;
-        case ADXL345_DATA_RATE_0_20: returnString = "0.20 Hz"; break;
-        case ADXL345_DATA_RATE_0_10: returnString = "0.10 Hz"; break;
+        case ADXL345_DATA_RATE_3200: return(F("3200 Hz")); break;
+        case ADXL345_DATA_RATE_1600: return(F("1600 Hz")); break;
+        case ADXL345_DATA_RATE_800:  return(F("800 Hz"));  break;
+        case ADXL345_DATA_RATE_400:  return(F("400 Hz"));  break;
+        case ADXL345_DATA_RATE_200:  return(F("200 Hz"));  break;
+        case ADXL345_DATA_RATE_100:  return(F("100 Hz"));  break;
+        case ADXL345_DATA_RATE_50:   return(F("50 Hz"));   break;
+        case ADXL345_DATA_RATE_25:   return(F("25 Hz"));   break;
+        case ADXL345_DATA_RATE_12_5: return(F("12.5 Hz")); break;
+        case ADXL345_DATA_RATE_6_25: return(F("6.25 Hz")); break;
+        case ADXL345_DATA_RATE_3_13: return(F("3.13 Hz")); break;
+        case ADXL345_DATA_RATE_1_56: return(F("1.56 Hz")); break;
+        case ADXL345_DATA_RATE_0_78: return(F("0.78 Hz")); break;
+        case ADXL345_DATA_RATE_0_39: return(F("0.39 Hz")); break;
+        case ADXL345_DATA_RATE_0_20: return(F("0.20 Hz")); break;
+        case ADXL345_DATA_RATE_0_10: return(F("0.10 Hz")); break;
+        default: return(F("unknown"));
     }
-    
-    return returnString;
 }
 
 uint8_t ADXL345_WE::getPowerCtlReg(){
@@ -162,65 +157,57 @@ void ADXL345_WE::setFullRes(boolean full){
 }
 
 String ADXL345_WE::getRangeAsString(){
-    String rangeAsString = "";
     adxl345_range range = getRange();
     switch(range){
-        case ADXL345_RANGE_2G:  rangeAsString = "2g";   break;
-        case ADXL345_RANGE_4G:  rangeAsString = "4g";   break;
-        case ADXL345_RANGE_8G:  rangeAsString = "8g";   break;
-        case ADXL345_RANGE_16G: rangeAsString = "16g";  break;
+        case ADXL345_RANGE_2G:  return(F("2g"));   break;
+        case ADXL345_RANGE_4G:  return(F("4g"));   break;
+        case ADXL345_RANGE_8G:  return(F("8g"));   break;
+        case ADXL345_RANGE_16G: return(F("16g"));  break;
+        default: return(F("unknown"));
         
     }
-    return rangeAsString;
 }
 
 /************ x,y,z results ************/
 
-xyzFloat ADXL345_WE::getRawValues(){
+void ADXL345_WE::getRawValues(xyzFloat *rawVal){
     uint8_t rawData[6]; 
-    xyzFloat rawVal = {0.0, 0.0, 0.0};
     readMultipleRegisters(ADXL345_DATAX0, 6, rawData);
-    rawVal.x = (static_cast<int16_t>((rawData[1] << 8) | rawData[0])) * 1.0;
-    rawVal.y = (static_cast<int16_t>((rawData[3] << 8) | rawData[2])) * 1.0;
-    rawVal.z = (static_cast<int16_t>((rawData[5] << 8) | rawData[4])) * 1.0;
-    
-    return rawVal;
+    rawVal->x = (static_cast<int16_t>((rawData[1] << 8) | rawData[0])) * 1.0;
+    rawVal->y = (static_cast<int16_t>((rawData[3] << 8) | rawData[2])) * 1.0;
+    rawVal->z = (static_cast<int16_t>((rawData[5] << 8) | rawData[4])) * 1.0;
 }
 
-xyzFloat ADXL345_WE::getCorrectedRawValues(){
+void ADXL345_WE::getCorrectedRawValues(xyzFloat *rawVal){
     uint8_t rawData[6]; 
-    xyzFloat rawVal = {0.0, 0.0, 0.0};
     readMultipleRegisters(ADXL345_DATAX0, 6, rawData);
     int16_t xRaw = static_cast<int16_t>(rawData[1] << 8) | rawData[0];
     int16_t yRaw = static_cast<int16_t>(rawData[3] << 8) | rawData[2];
     int16_t zRaw = static_cast<int16_t>(rawData[5] << 8) | rawData[4];
         
-    rawVal.x = xRaw * 1.0 - (offsetVal.x / rangeFactor);
-    rawVal.y = yRaw * 1.0 - (offsetVal.y / rangeFactor);
-    rawVal.z = zRaw * 1.0 - (offsetVal.z / rangeFactor);
-    
-    return rawVal;
+    rawVal->x = xRaw * 1.0 - (offsetVal.x / rangeFactor);
+    rawVal->y = yRaw * 1.0 - (offsetVal.y / rangeFactor);
+    rawVal->z = zRaw * 1.0 - (offsetVal.z / rangeFactor);
 }
 
-xyzFloat ADXL345_WE::getGValues(){
-    xyzFloat rawVal = getCorrectedRawValues();
-    xyzFloat gVal = {0.0, 0.0, 0.0};
-    gVal.x = rawVal.x * MILLI_G_PER_LSB * rangeFactor * corrFact.x / 1000.0;
-    gVal.y = rawVal.y * MILLI_G_PER_LSB * rangeFactor * corrFact.y / 1000.0;
-    gVal.z = rawVal.z * MILLI_G_PER_LSB * rangeFactor * corrFact.z / 1000.0;
-    return gVal;
+void ADXL345_WE::getGValues(xyzFloat *gVal){
+    xyzFloat rawVal;
+    getCorrectedRawValues(&rawVal);
+    *gVal = rawVal * corrFact * MILLI_G_PER_LSB * rangeFactor / 1000.0; 
 }
 
-xyzFloat ADXL345_WE::getAngles(){
-    xyzFloat gVal = getGValues();
-    xyzFloat angleVal = {0.0, 0.0, 0.0};
+/************ Angles and Orientation ************/ 
+
+void ADXL345_WE::getAngles(xyzFloat *angleVal){
+    xyzFloat gVal;
+    getGValues(&gVal);
     if(gVal.x > 1){
         gVal.x = 1;
     }
     else if(gVal.x < -1){
         gVal.x = -1;
     }
-    angleVal.x = (asin(gVal.x)) * 57.296;
+    angleVal->x = (asin(gVal.x)) * 57.296;
     
     if(gVal.y > 1){
         gVal.y = 1;
@@ -228,7 +215,7 @@ xyzFloat ADXL345_WE::getAngles(){
     else if(gVal.y < -1){
         gVal.y = -1;
     }
-    angleVal.y = (asin(gVal.y)) * 57.296;
+    angleVal->y = (asin(gVal.y)) * 57.296;
     
     if(gVal.z > 1){
         gVal.z = 1;
@@ -236,24 +223,16 @@ xyzFloat ADXL345_WE::getAngles(){
     else if(gVal.z < -1){
         gVal.z = -1;
     }
-    angleVal.z = (asin(gVal.z)) * 57.296;
-    
-    return angleVal;
+    angleVal->z = (asin(gVal.z)) * 57.296;
 }
 
-xyzFloat ADXL345_WE::getCorrAngles(){
-    xyzFloat corrAnglesVal = getAngles();
-    corrAnglesVal.x -= angleOffsetVal.x;
-    corrAnglesVal.y -= angleOffsetVal.y;
-    corrAnglesVal.z -= angleOffsetVal.z;
-        
-    return corrAnglesVal;
+void ADXL345_WE::getCorrAngles(xyzFloat *corrAngleVal){
+    getAngles(&(*corrAngleVal));
+    *corrAngleVal -= angleOffsetVal;
 }
-
-/************ Angles and Orientation ************/ 
 
 void ADXL345_WE::measureAngleOffsets(){
-    angleOffsetVal = getAngles();
+    getAngles(&angleOffsetVal);
 }
 
 xyzFloat ADXL345_WE::getAngleOffsets(){
@@ -266,7 +245,8 @@ void ADXL345_WE::setAngleOffsets(xyzFloat aos){
 
 adxl345_orientation ADXL345_WE::getOrientation(){
     adxl345_orientation orientation = FLAT;
-    xyzFloat angleVal = getAngles();
+    xyzFloat angleVal;
+    getAngles(&angleVal);
     if(abs(angleVal.x) < 45){      // |x| < 45
         if(abs(angleVal.y) < 45){      // |y| < 45
             if(angleVal.z > 0){          //  z  > 0
@@ -311,13 +291,15 @@ String ADXL345_WE::getOrientationAsString(){
 }
 
 float ADXL345_WE::getPitch(){
-    xyzFloat gVal = getGValues();
+    xyzFloat gVal;
+    getGValues(&gVal);
     float pitch = (atan2(-gVal.x, sqrt(abs((gVal.y*gVal.y + gVal.z*gVal.z))))*180.0)/M_PI;
     return pitch;
 }
     
 float ADXL345_WE::getRoll(){
-    xyzFloat gVal = getGValues();
+    xyzFloat gVal;
+    getGValues(&gVal);
     float roll = (atan2(gVal.y, gVal.z)*180.0)/M_PI;
     return roll;
 }
@@ -620,6 +602,7 @@ uint8_t ADXL345_WE::writeRegister(uint8_t reg, uint8_t val){
     else{
         _spi->beginTransaction(mySPISettings);
         digitalWrite(csPin, LOW);
+        delayMicroseconds(5);
         _spi->transfer(reg); 
         _spi->transfer(val);
         digitalWrite(csPin, HIGH);
@@ -643,6 +626,7 @@ uint8_t ADXL345_WE::readRegister8(uint8_t reg){
         reg |= 0x80;
         _spi->beginTransaction(mySPISettings);
         digitalWrite(csPin, LOW);
+        delayMicroseconds(5);
         _spi->transfer(reg); 
         regValue = _spi->transfer(0x00);
         digitalWrite(csPin, HIGH);
@@ -666,6 +650,7 @@ void ADXL345_WE::readMultipleRegisters(uint8_t reg, uint8_t count, uint8_t *buf)
         reg = reg | 0x40;
         _spi->beginTransaction(mySPISettings);
         digitalWrite(csPin, LOW);
+        delayMicroseconds(5);
         _spi->transfer(reg); 
         for(int i=0; i<count; i++){
             buf[i] = _spi->transfer(0x00);
