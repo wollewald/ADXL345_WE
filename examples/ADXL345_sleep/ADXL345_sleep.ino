@@ -23,7 +23,7 @@ ADXL345_WE myAcc = ADXL345_WE(ADXL345_I2CADDR);
 
 void setup(){
   Wire.begin();
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("ADXL345_Sketch - Sleep");
   Serial.println();
   if(!myAcc.init()){
@@ -91,7 +91,8 @@ void loop(){
 
 void doMeasurements(){
   for(int i=0; i<10; i++){
-    xyzFloat g = myAcc.getGValues();
+    xyzFloat g;
+    myAcc.getGValues(&g);
     
     Serial.print("g-x   = ");
     Serial.print(g.x);
