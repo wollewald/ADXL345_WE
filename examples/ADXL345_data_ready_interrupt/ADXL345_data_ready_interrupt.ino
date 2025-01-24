@@ -25,7 +25,7 @@ ADXL345_WE myAcc = ADXL345_WE(ADXL345_I2CADDR);
 
 void setup(){
   Wire.begin();
-  Serial.begin(9600);
+  Serial.begin(115200);
   pinMode(int2Pin, INPUT);
   Serial.println("ADXL345_Sketch - Data Ready Interrupt");
   Serial.println();
@@ -105,7 +105,8 @@ void setup(){
 void loop() {
   // you see here is no delay to control the output rate
   if(dataReady==true){
-    xyzFloat g = myAcc.getGValues();
+    xyzFloat g;
+    myAcc.getGValues(&g);
     // dataReady = false; // uncomment, if you want capture next interrupts
       
     Serial.print("g-x   = ");
