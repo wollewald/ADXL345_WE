@@ -23,7 +23,7 @@ ADXL345_WE myAcc = ADXL345_WE(ADXL345_I2CADDR);
 
 void setup(){
   Wire.begin();
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("ADXL345_Sketch - Basic Data");
   Serial.println();
   if(!myAcc.init()){
@@ -49,6 +49,7 @@ void setup(){
     ADXL345_DATA_RATE_0_10       0.10
 */
   myAcc.setDataRate(ADXL345_DATA_RATE_50);
+  delay(100);
   Serial.print("Data rate: ");
   Serial.print(myAcc.getDataRateAsString());
 
@@ -81,8 +82,10 @@ void setup(){
 */
 
 void loop() {
-  xyzFloat raw = myAcc.getRawValues();
-  xyzFloat g = myAcc.getGValues();
+  xyzFloat raw;
+  xyzFloat g;
+  myAcc.getRawValues(&raw);
+  myAcc.getGValues(&g);
   
   Serial.print("Raw-x = ");
   Serial.print(raw.x);
