@@ -27,7 +27,7 @@ ADXL345_WE myAcc = ADXL345_WE(ADXL345_I2CADDR);
 
 void setup(){
   Wire.begin();
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("ADXL345_Sketch");
   Serial.println();
   if(!myAcc.init()){
@@ -40,7 +40,7 @@ void setup(){
  *  is (min+max)/2. You have to add the setCorrFactors function to all sketches 
  *  in which you want to use it.
 */
-  myAcc.setCorrFactors(-266.0, 285.0, -268.0, 278.0, -291.0, 214.0);
+//  myAcc.setCorrFactors(-266.0, 285.0, -268.0, 278.0, -291.0, 214.0);
 
 /* In this next step the offset for angles is corrected to get quite precise corrected 
  *  angles for x and y up to ~60°. The additional offsetCorrection is only used for 
@@ -86,10 +86,11 @@ void setup(){
 }
 
 void loop() {
-  xyzFloat raw = myAcc.getRawValues();
-  xyzFloat g = myAcc.getGValues();
-  xyzFloat angle = myAcc.getAngles();
-  xyzFloat corrAngles = myAcc.getCorrAngles();
+  xyzFloat raw, g, angle, corrAngle;
+  myAcc.getRawValues(&raw);
+  myAcc.getGValues(&g);
+  myAcc.getAngles(&angle);
+  myAcc.getCorrAngles(&corrAngle);
   
 /* Still the uncorrected raw values!! */  
   Serial.print("Raw-x    = ");
@@ -120,11 +121,11 @@ void loop() {
     offsets to ensure they start at 0° 
 */
   Serial.print("cAngle x = ");
-  Serial.print(corrAngles.x);
+  Serial.print(corrAngle.x);
   Serial.print("  |  cAngle y   = ");
-  Serial.print(corrAngles.y);
+  Serial.print(corrAngle.y);
   Serial.print("  |  cAngle z   = ");
-  Serial.println(corrAngles.z);
+  Serial.println(corrAngle.z);
 
   Serial.print("Orientation of the module: ");
   Serial.println(myAcc.getOrientationAsString());
