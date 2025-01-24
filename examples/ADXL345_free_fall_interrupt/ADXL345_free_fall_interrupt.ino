@@ -25,7 +25,7 @@ ADXL345_WE myAcc = ADXL345_WE(ADXL345_I2CADDR);
 
 void setup(){
   Wire.begin();
-  Serial.begin(9600);
+  Serial.begin(115200);
   pinMode(int2Pin, INPUT);
   Serial.println("ADXL345_Sketch - Free Fall Interrupt");
   Serial.println();
@@ -99,8 +99,9 @@ void setup(){
 }
 
 void loop() {
-  xyzFloat raw = myAcc.getRawValues();
-  xyzFloat g = myAcc.getGValues();
+  xyzFloat raw, g;
+  myAcc.getRawValues(&raw);
+  myAcc.getGValues(&g);
      
   Serial.print("Raw-x = ");
   Serial.print(raw.x);
