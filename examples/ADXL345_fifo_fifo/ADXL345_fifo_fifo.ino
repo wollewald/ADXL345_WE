@@ -25,7 +25,7 @@ ADXL345_WE myAcc = ADXL345_WE(ADXL345_I2CADDR);
 
 void setup() {
   Wire.begin();
-  Serial.begin(9600);
+  Serial.begin(115200);
   pinMode(int2Pin, INPUT);
   Serial.println("ADXL345_Sketch - FIFO - Fifo Mode");
   Serial.println();
@@ -119,7 +119,8 @@ void loop() {
   Serial.println("FiFo full");
   
   for(int i=0; i<34; i++){ // this is > 32 samples, but I want to show that the values do not change when FIFO is full
-    xyzFloat g = myAcc.getGValues();
+    xyzFloat g;
+    myAcc.getGValues(&g);
     
     Serial.print("g-x   = ");
     Serial.print(g.x);
