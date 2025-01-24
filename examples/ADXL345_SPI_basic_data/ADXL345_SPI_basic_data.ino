@@ -32,14 +32,15 @@ bool spi = true;    // flag indicating that SPI shall be used
 ADXL345_WE myAcc = ADXL345_WE(CS_PIN, spi);
 
 void setup(){
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("ADXL345_Sketch - Basic Data");
-  if(!myAcc.init()){
-    Serial.println("ADXL345 not connected!");
-  }
 
 /* You can set the SPI clock speed. Default is 5 MHz. */
 //  myAcc.setSPIClockSpeed(4000000);
+
+  if(!myAcc.init()){
+    Serial.println("ADXL345 not connected!");
+  }
    
 /* Choose the data rate         Hz
     ADXL345_DATA_RATE_3200    3200
@@ -93,8 +94,9 @@ void setup(){
 */
 
 void loop() {
-  xyzFloat raw = myAcc.getRawValues();
-  xyzFloat g = myAcc.getGValues();
+  xyzFloat raw, g;
+  myAcc.getRawValues(&raw);
+  myAcc.getGValues(&g);
   
   Serial.print("Raw-x = ");
   Serial.print(raw.x);
