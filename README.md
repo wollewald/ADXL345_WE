@@ -20,7 +20,7 @@ Versions >= 3.0.0:
  myAcc.getGValues(&g);
 ````
 
-<h2>General Information<h2>
+<h2>General Information</h2>
 
 A detailed tutorial is available: 
 
