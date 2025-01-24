@@ -24,7 +24,7 @@ ADXL345_WE myAcc = ADXL345_WE(ADXL345_I2CADDR);
 
 void setup() {
   Wire.begin();
-  Serial.begin(9600);
+  Serial.begin(115200);
   pinMode(int2Pin, INPUT);
   Serial.println("ADXL345_Sketch - Single Tap Interrupt");
   Serial.println();
@@ -120,7 +120,8 @@ void setup() {
 */
 void loop() {
   if ((millis() % 1000) == 1) {
-    xyzFloat g = myAcc.getGValues();
+    xyzFloat g;
+    myAcc.getGValues(&g);
     Serial.print("g-x   = ");
     Serial.print(g.x);
     Serial.print("  |  g-y   = ");
