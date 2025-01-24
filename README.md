@@ -5,6 +5,23 @@ I have tried to create a library for the ADXL345 which is easy to use for people
 
 You can use both I2C and SPI. If you want to find out how to use SPI, look at the ADXL345_SPI_basic_data.ino. 
 
+<h2>Important Note on Release 3.0.0</h2>
+
+In versions < 3.0.0, there were several functions that returned a structure of type "xyzFloat". To be exact not the structure was returned but a pointer to this structure. Since the structures were created in the functions, the memory space where they were stored could have been overwritten. I have now changed this, but unfortunately, former sketches are not compatible anymore. However the change you need to apply is small. Example: 
+
+Version < 3.0.0:
+````
+xyzFloat g = getGValues();
+````
+
+Versions >= 3.0.0:
+````
+ xyzFloat g;
+ myAcc.getGValues(&g);
+````
+
+<h2>General Information<h2>
+
 A detailed tutorial is available: 
 
 https://wolles-elektronikkiste.de/adxl345-teil-1  (German)
@@ -28,6 +45,8 @@ If you are not so much experienced with the ADXL345, I recommend to work through
 13) ADXL345_fifo_fifo
 14) ADXL345_fifo_stream
 15) ADXL345_fifo_trigger
+16) ADXL345_SPI_two_devices_one_interface
+17) ADXL345_SPI_two_devices_two_interfaces
 
 To develop this library I have worked with a ADXL345 module. It should also work with the bare ADXL345 IC. For the module I have noticed that the power consumption is much higher than mentioned in the data sheet. I think the issue is the voltage converter on the module. You can reduce the power consumption by choosing 3.3 volts instead of 5 volts. At least this worked with my module. 
 
