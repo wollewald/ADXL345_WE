@@ -25,7 +25,7 @@ ADXL345_WE myAcc = ADXL345_WE(ADXL345_I2CADDR);
 
 void setup() {
   Wire.begin();
-  Serial.begin(9600);
+  Serial.begin(115200);
   pinMode(int2Pin, INPUT);
   Serial.println("ADXL345_Sketch - FIFO - Stream Mode");
   Serial.println();
@@ -163,7 +163,8 @@ void eventISR() {
 
 void printFifo(){
   for(int i=0; i<32; i++){
-    xyzFloat g = myAcc.getGValues();
+    xyzFloat g;
+    myAcc.getGValues(&g);
     
     Serial.print("g-x   = ");
     Serial.print(g.x);
