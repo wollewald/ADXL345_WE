@@ -119,11 +119,11 @@ class ADXL345_WE
         
         ADXL345_WE(TwoWire *w, uint8_t addr = 0x53) : _wire{w}, i2cAddress{addr}, useSPI{false} {}
         
-        ADXL345_WE(int cs, bool spi, int mosi = 999, int miso = 999, int sck = 999) 
-            : _spi{&SPI}, csPin{cs}, useSPI{spi}, mosiPin{mosi}, misoPin{miso}, sckPin{sck} {}
+        ADXL345_WE(int cs, bool spi, int mosi = 999, int miso = 999, int sck = 999, int sid = -1) 
+            : _spi{&SPI}, csPin{cs}, useSPI{spi}, mosiPin{mosi}, misoPin{miso}, sckPin{sck}, sensorID{sid} {}
             
-        ADXL345_WE(SPIClass *s, int cs, bool spi, int mosi = 999, int miso = 999, int sck = 999)
-            :  _spi{s}, csPin{cs}, useSPI{spi}, mosiPin{mosi}, misoPin{miso}, sckPin{sck} {}
+        ADXL345_WE(SPIClass *s, int cs, bool spi, int mosi = 999, int miso = 999, int sck = 999, int sid = -1)
+            :  _spi{s}, csPin{cs}, useSPI{spi}, mosiPin{mosi}, misoPin{miso}, sckPin{sck}, sensorID{sid} {}
         
         /* registers */
         
@@ -249,7 +249,8 @@ class ADXL345_WE
         bool useSPI;    
         int mosiPin;
         int misoPin;
-        int sckPin;     
+        int sckPin;  
+        int sensorID;
         float rangeFactor;
         uint8_t writeRegister(uint8_t reg, uint8_t val);
         uint8_t readRegister8(uint8_t reg);
