@@ -13,23 +13,23 @@
 #include<ADXL345_WE.h>
 #include<SPI.h>
 #define CS_PIN 5   // Chip Select Pin
-/* In case you want to change the default SPI pins (e.g. for ESP32), uncomment and adjust:
-  #define MOSI_PIN 22
-  #define MISO_PIN 17
-  #define SCK_PIN 16
-  If you use an ESP8266, the standard CS Pin (e.g. D8/GPIO15 on a WEMOS D1 mini or NodeMCU) might not work since the CS pin of 
+/* In case you want to change the default SPI pins (e.g. for ESP32), uncomment and adjust: */
+// #define MOSI_PIN 22
+// #define MISO_PIN 17
+// #define SCK_PIN 16
+/*  If you use an ESP8266, the standard CS Pin (e.g. D8/GPIO15 on a WEMOS D1 mini or NodeMCU) might not work since the CS pin of 
   the ADXL345 has a pull-up resistor on most modules. If D8 is high at reset, the ESP8266 will not boot. In that case choose a 
-  different pin as CS!  
-*/
+  different pin as CS!  */
+
 bool spi = true;    // flag indicating that SPI shall be used
 
-/* There are three ways to create your ADXL345 object in SPI mode:
+/* There are three ways to create your ADXL345 object in SPI mode
  * ADXL345_WE myAcc = ADXL345_WE(CS_PIN, spi)     -> uses SPI, spi is just a flag, see SPI example
  * ADXL345_WE myAcc = ADXL345_WE(&SPI, CS_PIN, spi) -> uses SPI / passes the SPI object, spi is just a flag, see SPI example
  * ADXL345_WE myAcc = ADXL345_WE(&SPI, CS_PIN, spi, MOSI_PIN, MISO_PIN, SCK_PIN) -> like the latter, but also changes the SPI pins  
  */
 
-ADXL345_WE myAcc = ADXL345_WE(CS_PIN, spi);
+ ADXL345_WE myAcc = ADXL345_WE(CS_PIN, spi);
 
 void setup(){
   Serial.begin(115200);
