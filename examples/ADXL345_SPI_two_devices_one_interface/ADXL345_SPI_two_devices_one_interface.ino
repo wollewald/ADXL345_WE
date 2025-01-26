@@ -13,17 +13,22 @@
 #include<SPI.h>
 #define CS_PIN_1 7
 #define CS_PIN_2 6 
+// const int sensorID_1 = 42;  // needed for Arduino UNO R4 Minima or WIFI
+// const int sensorID_2 = 4242;  // needed for Arduino UNO R4 Minima or WIFI
 bool spi = true;    // flag indicating that SPI shall be used
 
 ADXL345_WE myAcc_1 = ADXL345_WE(&SPI, CS_PIN_1, spi);
 ADXL345_WE myAcc_2 = ADXL345_WE(&SPI, CS_PIN_2, spi);
 
+/* For Arduino UNO R4 boards choose these constructors */
+// ADXL345_WE myAcc_1 = ADXL345_WE(&SPI, CS_PIN_1, spi, sensorID_1);
+// ADXL345_WE myAcc_2 = ADXL345_WE(&SPI, CS_PIN_2, spi, sensorID_2);
+
 void setup(){
   Serial.begin(115200);
-  /* You can set the SPI clock speed. Default is 5 MHz. If using the Arduino UNO R4 Minima or WiFi, 
-  it is important to have two different values (Idon't know why!) */
+  /* You can set the SPI clock speed. Default is 5 MHz. */
 //   myAcc_1.setSPIClockSpeed(5000000);
-//   myAcc_2.setSPIClockSpeed(5000000); // for an Arduino UNO R4 take e.g. 5000001 (bizarre, I know)
+//   myAcc_2.setSPIClockSpeed(5000000); 
   
   pinMode(CS_PIN_1, OUTPUT);
   digitalWrite(CS_PIN_1, HIGH);
