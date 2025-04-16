@@ -1,5 +1,5 @@
 /***************************************************************************
-* Example sketch for the ADXL345_WE library
+* Example sketch for the ADXL345_WE / ADXL343_WE library
 *
 * This sketch shows how to use sleep mode of the ADXL345 and its effect
 *   
