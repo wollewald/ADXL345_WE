@@ -1,5 +1,5 @@
 /***************************************************************************
-* Example sketch for the ADXL345_WE library
+* Example sketch for the ADXL345_WE / ADXL343_WE library
 *
 * This sketch shows how use SPI for the basic data sketch. Please apply the 
 * same steps in the other sketches if you want to use SPI.  
