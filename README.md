@@ -1,9 +1,16 @@
 # ADXL345_WE
-Arduino Library for the ADXL345 accelerometer. 
+Arduino Library for the ADXL345 and the ADXL343 accelerometer. 
 
 I have tried to create a library for the ADXL345 which is easy to use for people who don't want to deal with all the registers. Therefore I have added lots example sketches which will enable you to deal even with the more complex features such as the FIFO modes. Howerever I still recommend to have a look into the data sheet to get a deeper understanding. 
 
 You can use both I2C and SPI. If you want to find out how to use SPI, look at the ADXL345_SPI_basic_data.ino. 
+
+<h2>ADXL343 vs. ADXL345</h2>
+The ADXL343 has the same registers and settings like the ADXL345. The data sheets of both devices differ only marginally, e.g. the sensitivity of the ADXL345 has defined min./max. values, whereas the ADXL343 has only typical values. All example sketches run on both devices without any changes. However, with version 3.0.2 I have introduced a new ADXL343_WE class and defines like "ADXL343_RANGE_8G" because users might feel better using the correct name.
+
+
+The ADXL343 modules that I have seen so far have two QWIIC connectors, which are convenient to use if your MCU board also has a QWIIC connector (e.g. Arduino UNO R4).
+
 
 <h2>Important Note on Release 3.0.0</h2>
 
