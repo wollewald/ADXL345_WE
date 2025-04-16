@@ -1,5 +1,5 @@
 /********************************************************************
-* This is a library for the ADXL345 accelerometer.
+* This is a library for the ADXL345 / ADXL343 accelerometer.
 *
 * You'll find an example which should enable you to use the library. 
 *
@@ -141,7 +141,7 @@ adxl345_range ADXL345_WE::getRange(){
     return adxl345_range(regVal);
 }
 
-void ADXL345_WE::setFullRes(boolean full){
+void ADXL345_WE::setFullRes(bool full){
     regVal = readRegister8(ADXL345_DATA_FORMAT);
     if(full){
         adxl345_lowRes = false;
