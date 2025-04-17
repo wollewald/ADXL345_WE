@@ -168,6 +168,10 @@ String ADXL345_WE::getRangeAsString(){
     }
 }
 
+uint8_t ADXL345_WE::getDeviceID(){
+    return(readRegister8(ADXL345_DEVID));
+}
+
 /************ x,y,z results ************/
 
 void ADXL345_WE::getRawValues(xyzFloat *rawVal){
