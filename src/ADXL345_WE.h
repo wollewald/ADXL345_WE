@@ -249,7 +249,7 @@ class ADXL345_WE
         adxl345_range getRange();
         void setFullRes(bool full);
         String getRangeAsString();
-		uint8_t getDeviceID();
+        uint8_t getDeviceID();
         
         /* x,y,z results */
             
