@@ -28,6 +28,14 @@ bool ADXL345_WE::init(){
             _spi->begin(sckPin, misoPin, mosiPin, csPin);
         }
 #endif
+#ifdef ARDUINO_ARCH_STM32
+    else {
+       _spi->setMISO(misoPin);
+       _spi->setMOSI(mosiPin);
+       _spi->setSCLK(sckPin);
+       _spi->begin();
+    }
+#endif
         setSPIClockSpeed(spiClock);
         pinMode(csPin, OUTPUT);
         digitalWrite(csPin, HIGH);
