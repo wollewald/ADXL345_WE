@@ -13,7 +13,7 @@
 #include<ADXL345_WE.h>
 #include<SPI.h>
 #define CS_PIN 5   // Chip Select Pin
-/* In case you want to change the default SPI pins (e.g. for ESP32), uncomment and adjust: */
+/* In case you want to change the default SPI pins (e.g. for ESP32 or STM32 boards), uncomment and adjust: */
 // #define MOSI_PIN 22
 // #define MISO_PIN 17
 // #define SCK_PIN 16
@@ -29,7 +29,21 @@ bool spi = true;    // flag indicating that SPI shall be used
  * ADXL345_WE myAcc = ADXL345_WE(&SPI, CS_PIN, spi, MOSI_PIN, MISO_PIN, SCK_PIN) -> like the latter, but also changes the SPI pins  
  */
 
- ADXL345_WE myAcc = ADXL345_WE(CS_PIN, spi);
+ADXL345_WE myAcc = ADXL345_WE(CS_PIN, spi);
+
+/* Changing SPI pins on STM32 boards can be a bit diffcult - the following worked on a Nucleo-L432KC board:
+
+    #define CS_PIN D3   
+    #define MOSI_PIN A6 
+    #define MISO_PIN D10 
+    #define SCK_PIN A1 
+    bool spi = true;
+    ADXL345_WE myAcc = ADXL345_WE(&SPI, CS_PIN, spi, MOSI_PIN, MISO_PIN, SCK_PIN);
+
+   Or, using the same pins:
+    SPIClass mySPI(MOSI_PIN, MISO_PIN, SCK_PIN); // don't pass the CS-Pin (=SSEL)
+    ADXL345_WE myAcc = ADXL345_WE(&mySPI, CS_PIN, spi);
+*/
 
 void setup(){
   Serial.begin(115200);
