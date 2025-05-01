@@ -146,6 +146,7 @@ void loop() {
     Serial.print(g.y);
     Serial.print("  |  g-z   = ");
     Serial.println(g.z);
+    delay(1);
   }
 
   if(in_activity == true) {
