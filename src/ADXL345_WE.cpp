@@ -85,7 +85,7 @@ void ADXL345_WE::setCorrFactors(float xMin, float xMax, float yMin, float yMax, 
 }
 
 void ADXL345_WE::setDataRate(adxl345_dataRate rate){
-    regVal |= readRegister8(ADXL345_BW_RATE);
+    regVal = readRegister8(ADXL345_BW_RATE);
     regVal &= 0xF0;
     regVal |= rate;
     writeRegister(ADXL345_BW_RATE, regVal);
