@@ -38,6 +38,9 @@ constexpr uint8_t ADXL345_ACT_HIGH {0x00};
 #define ADXL343_ACT_LOW ADXL_345_ACT_LOW
 #define ADXL343_ACT_HIGH ADXL345_ACT_HIGH
 
+constexpr float ADXL345_FLOAT_ERROR {999.0}; // Returned by getPitch() and getRoll() to indicate error
+constexpr float ADXL343_FLOAT_ERROR {ADXL345_FLOAT_ERROR};
+
 typedef enum ADXL345_PWR_CTL {
     ADXL345_WAKE_UP_0, ADXL345_WAKE_UP_1, ADXL345_SLEEP, 
     ADXL345_MEASURE, ADXL345_AUTO_SLEEP, ADXL345_LINK,
@@ -49,18 +52,8 @@ typedef enum ADXL345_PWR_CTL {
     ADXL343_LINK       = ADXL345_LINK
 } adxl345_pwrCtl;
 
-typedef enum ADXL345_WAKE_UP { // belongs to POWER CTL
-    ADXL345_WAKE_UP_FREQ_8,
-    ADXL345_WAKE_UP_FREQ_4,
-    ADXL345_WAKE_UP_FREQ_2,
-    ADXL345_WAKE_UP_FREQ_1,
-    ADXL343_WAKE_UP_FREQ_8 = ADXL345_WAKE_UP_FREQ_8,
-    ADXL343_WAKE_UP_FREQ_4 = ADXL345_WAKE_UP_FREQ_4,
-    ADXL343_WAKE_UP_FREQ_2 = ADXL345_WAKE_UP_FREQ_2,
-    ADXL343_WAKE_UP_FREQ_1 = ADXL345_WAKE_UP_FREQ_1
-} adxl345_wakeUpFreq;
-
 typedef enum ADXL345_DATA_RATE {
+    ADXL345_DATA_RATE_ERROR   = -1, // returned on read error, cannot be set
     ADXL345_DATA_RATE_3200    = 0x0F,
     ADXL345_DATA_RATE_1600    = 0x0E,
     ADXL345_DATA_RATE_800     = 0x0D,
@@ -77,6 +70,7 @@ typedef enum ADXL345_DATA_RATE {
     ADXL345_DATA_RATE_0_39    = 0x02,
     ADXL345_DATA_RATE_0_20    = 0x01,
     ADXL345_DATA_RATE_0_10    = 0x00,
+    ADXL343_DATA_RATE_ERROR   = ADXL345_DATA_RATE_ERROR,
     ADXL343_DATA_RATE_3200    = ADXL345_DATA_RATE_3200,
     ADXL343_DATA_RATE_1600    = ADXL345_DATA_RATE_1600,
     ADXL343_DATA_RATE_800     = ADXL345_DATA_RATE_800,
@@ -96,10 +90,12 @@ typedef enum ADXL345_DATA_RATE {
 } adxl345_dataRate;
 
 typedef enum ADXL345_RANGE {
+    ADXL345_RANGE_ERROR        = -1, // returned on read error, cannot be set
     ADXL345_RANGE_16G          = 0b11,
     ADXL345_RANGE_8G           = 0b10,
     ADXL345_RANGE_4G           = 0b01,
     ADXL345_RANGE_2G           = 0b00,
+    ADXL343_RANGE_ERROR        = ADXL345_RANGE_ERROR,
     ADXL343_RANGE_16G          = ADXL345_RANGE_16G,
     ADXL343_RANGE_8G           = ADXL345_RANGE_8G,
     ADXL343_RANGE_4G           = ADXL345_RANGE_4G,
@@ -107,7 +103,9 @@ typedef enum ADXL345_RANGE {
 } adxl345_range;
 
 typedef enum ADXL345_ORIENTATION {
-  FLAT, FLAT_1, XY, XY_1, YX, YX_1
+  ADXL345_ORIENTATION_ERROR = -1, // returned on read error
+  ADXL343_ORIENTATION_ERROR = ADXL345_ORIENTATION_ERROR,
+  FLAT = 0, FLAT_1, XY, XY_1, YX, YX_1
 } adxl345_orientation;
 
 typedef enum ADXL345_INT {
@@ -144,7 +142,9 @@ typedef enum ADXL345_DC_AC {
 } adxl345_dcAcMode;
 
 typedef enum ADXL345_WAKE_UP_FREQ{
-    ADXL345_WUP_FQ_8, ADXL345_WUP_FQ_4, ADXL345_WUP_FQ_2, ADXL345_WUP_FQ_1,
+    ADXL345_WUP_FQ_UNSET = -1,
+    ADXL345_WUP_FQ_8 = 0, ADXL345_WUP_FQ_4, ADXL345_WUP_FQ_2, ADXL345_WUP_FQ_1,
+    ADXL343_WUP_FQ_UNSET = ADXL345_WUP_FQ_UNSET,
     ADXL343_WUP_FQ_8 = ADXL345_WUP_FQ_8,
     ADXL343_WUP_FQ_4 = ADXL345_WUP_FQ_4,
     ADXL343_WUP_FQ_2 = ADXL345_WUP_FQ_2,
@@ -241,29 +241,29 @@ class ADXL345_WE
         bool init();
         void setSPIClockSpeed(unsigned long clock);
         void setCorrFactors(float xMin, float xMax, float yMin, float yMax, float zMin, float zMax);
-        void setDataRate(adxl345_dataRate rate);
+        bool setDataRate(adxl345_dataRate rate);
         adxl345_dataRate getDataRate();
         String getDataRateAsString();
         uint8_t getPowerCtlReg();
-        void setRange(adxl345_range range);
+        bool setRange(adxl345_range range);
         adxl345_range getRange();
-        void setFullRes(bool full);
+        bool setFullRes(bool full);
         String getRangeAsString();
         uint8_t getDeviceID();
         
         /* x,y,z results */
             
-        void getRawValues(xyzFloat *rawVal);
-        void getCorrectedRawValues(xyzFloat *rawVal);
-        void getGValues(xyzFloat *gVal);
+        bool getRawValues(xyzFloat *rawVal);
+        bool getCorrectedRawValues(xyzFloat *rawVal);
+        bool getGValues(xyzFloat *gVal);
             
         /* Angles and Orientation */ 
         
-        void getAngles(xyzFloat *angleVal);
-        void getCorrAngles(xyzFloat *corrAngleVal);
-        void measureAngleOffsets();
+        bool getAngles(xyzFloat *angleVal);
+        bool getCorrAngles(xyzFloat *corrAngleVal);
+        bool measureAngleOffsets();
         xyzFloat getAngleOffsets();
-        void setAngleOffsets(xyzFloat aos);
+        void setAngleOffsets(const xyzFloat aos);
         adxl345_orientation getOrientation();
         String getOrientationAsString();
         float getPitch();
@@ -271,37 +271,35 @@ class ADXL345_WE
         
         /* Power, Sleep, Standby */ 
         
-        void setMeasureMode(bool measure);
-        void setSleep(bool sleep, adxl345_wUpFreq freq);
-        void setSleep(bool sleep);
-        void setAutoSleep(bool autoSleep, adxl345_wUpFreq freq);
-        void setAutoSleep(bool autoSleep);
+        bool setMeasureMode(bool measure);
+        bool setSleep(bool sleep, adxl345_wUpFreq freq = ADXL345_WUP_FQ_UNSET);
+        bool setAutoSleep(bool autoSleep, adxl345_wUpFreq freq = ADXL345_WUP_FQ_UNSET);
         bool isAsleep();
-        void setLowPower(bool lowpwr);
+        bool setLowPower(bool lowpwr);
         bool isLowPower();
         
         /* Interrupts */
         
-        void setInterrupt(adxl345_int type, uint8_t pin);
-        void setInterruptPolarity(uint8_t pol);
-        void deleteInterrupt(adxl345_int type);
+        bool setInterrupt(adxl345_int type, uint8_t pin);
+        bool setInterruptPolarity(uint8_t pol);
+        bool deleteInterrupt(adxl345_int type);
         uint8_t readAndClearInterrupts();
         bool checkInterrupt(uint8_t source, adxl345_int type);
-        void setLinkBit(bool link);
+        bool setLinkBit(bool link);
         void setFreeFallThresholds(float ffg, float fft);
-        void setActivityParameters(adxl345_dcAcMode mode, adxl345_actTapSet axes, float threshold);
-        void setInactivityParameters(adxl345_dcAcMode mode, adxl345_actTapSet axes, float threshold, uint8_t inactTime);
-        void setGeneralTapParameters(adxl345_actTapSet axes, float threshold, float duration, float latent);
-        void setAdditionalDoubleTapParameters(bool suppress, float window);
+        bool setActivityParameters(adxl345_dcAcMode mode, adxl345_actTapSet axes, float threshold);
+        bool setInactivityParameters(adxl345_dcAcMode mode, adxl345_actTapSet axes, float threshold, uint8_t inactTime);
+        bool setGeneralTapParameters(adxl345_actTapSet axes, float threshold, float duration, float latent);
+        bool setAdditionalDoubleTapParameters(bool suppress, float window);
         uint8_t getActTapStatus();
         String getActTapStatusAsString();
         
         /* FIFO */
         
-        void setFifoParameters(adxl345_triggerInt intNumber, uint8_t samples);
-        void setFifoMode(adxl345_fifoMode mode);
+        bool setFifoParameters(adxl345_triggerInt intNumber, uint8_t samples);
+        bool setFifoMode(adxl345_fifoMode mode);
         uint8_t getFifoStatus();
-        void resetTrigger();
+        bool resetTrigger();
        
     protected:
         TwoWire *_wire;
@@ -320,9 +318,9 @@ class ADXL345_WE
         int sckPin;  
         int sensorID;
         float rangeFactor;
-        uint8_t writeRegister(uint8_t reg, uint8_t val);
-        uint8_t readRegister8(uint8_t reg);
-        void readMultipleRegisters(uint8_t reg, uint8_t count, uint8_t *buf);
+        void writeRegister(uint8_t reg, uint8_t val);
+        bool readRegister8(uint8_t reg, uint8_t *val);
+        bool readMultipleRegisters(uint8_t reg, uint8_t count, uint8_t *buf);
         bool adxl345_lowRes;
 };
 
