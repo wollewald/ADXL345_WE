@@ -230,6 +230,7 @@ class ADXL345_WE
         static constexpr uint8_t ADXL345_FULL_RES         {0x03};
         static constexpr uint8_t ADXL345_SUPPRESS         {0x03};
         static constexpr uint8_t ADXL345_LOW_POWER        {0x04};
+        static constexpr uint8_t ADXL345_DEVICE_ID_VAL    {0xE5};
         
         /* Other */
         
@@ -250,6 +251,7 @@ class ADXL345_WE
         bool setFullRes(bool full);
         String getRangeAsString();
         uint8_t getDeviceID();
+        bool isConnected();
         
         /* x,y,z results */
             

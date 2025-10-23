@@ -198,6 +198,14 @@ uint8_t ADXL345_WE::getDeviceID(){
     }
 }
 
+bool ADXL345_WE::isConnected(){
+    if (getDeviceID() == ADXL345_DEVICE_ID_VAL){
+        return true;
+    } else {
+        return false;
+    }
+}
+
 /************ x,y,z results ************/
 
 bool ADXL345_WE::getRawValues(xyzFloat *rawVal){
