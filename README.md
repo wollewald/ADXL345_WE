@@ -11,22 +11,6 @@ The ADXL343 has the same registers and settings like the ADXL345. The data sheet
 
 The ADXL343 modules that I have seen so far have two QWIIC connectors, which are convenient to use if your MCU board also has a QWIIC connector (e.g. Arduino UNO R4).
 
-
-<h2>Important Note on Release 3.0.0</h2>
-
-In versions < 3.0.0, there were several functions that returned a structure of type "xyzFloat". To be exact not the structure was returned but a pointer to this structure. Since the structures were created in the functions, the memory space where they were stored could have been overwritten. I have now changed this, but unfortunately, former sketches are not compatible anymore. However the change you need to apply is small. Example: 
-
-Version < 3.0.0:
-````
-xyzFloat g = getGValues();
-````
-
-Versions >= 3.0.0:
-````
- xyzFloat g;
- myAcc.getGValues(&g);
-````
-
 <h2>General Information</h2>
 
 A detailed tutorial is available: 
@@ -39,21 +23,22 @@ If you are not so much experienced with the ADXL345, I recommend to work through
 
 1) ADXL345_basic_data
 2) ADXL345_SPI_basic_data
-3) ADXL345_calibration
-4) ADXL345_angles_orientation
-5) ADXL345_pitch_roll_corrected_angles
-6) ADXL345_sleep
-7) ADXL345_free_fall_interrupt
-8) ADXL345_data_ready_interrupt
-9) ADXL345_activity_inactivity_interrupt
-10) ADXL345_auto_sleep.ino
-11) ADXL345_single_tap
-12) ADXL345_double_tap
-13) ADXL345_fifo_fifo
-14) ADXL345_fifo_stream
-15) ADXL345_fifo_trigger
-16) ADXL345_SPI_two_devices_one_interface
-17) ADXL345_SPI_two_devices_two_interfaces
+3) ADXL345_basic_data_with_connection_check
+4) ADXL345_calibration
+5) ADXL345_angles_orientation
+6) ADXL345_pitch_roll_corrected_angles
+7) ADXL345_sleep
+8) ADXL345_free_fall_interrupt
+9) ADXL345_data_ready_interrupt
+10) ADXL345_activity_inactivity_interrupt
+11) ADXL345_auto_sleep.ino
+12) ADXL345_single_tap
+13) ADXL345_double_tap
+14) ADXL345_fifo_fifo
+15) ADXL345_fifo_stream
+16) ADXL345_fifo_trigger
+17) ADXL345_SPI_two_devices_one_interface
+18) ADXL345_SPI_two_devices_two_interfaces
 
 To develop this library I have worked with a ADXL345 module. It should also work with the bare ADXL345 IC. For the module I have noticed that the power consumption is much higher than mentioned in the data sheet. I think the issue is the voltage converter on the module. You can reduce the power consumption by choosing 3.3 volts instead of 5 volts. At least this worked with my module. 
 
